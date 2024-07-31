@@ -1,89 +1,161 @@
+import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import instance from '../../API/axiosInstance';
-import toastMaker from '../../shared/helpers/toastMaker/toastMaker';
+import { axiosGet, axiosPost, axiosPatch, axiosDel } from '../../service/axios';
 
-export const getDayWater = createAsyncThunk(
-  'water/DayWater',
+export const getMonthly = createAsyncThunk(
+  'water/monthly',
   async (date, thunkAPI) => {
     try {
-      if (new Date(date).getTime() > new Date().getTime()) {
-        return [];
-      }
-      if (
-        new Date(date).getTime() <
-        new Date('2023-01-01T00:00:00.000Z').getTime()
-      ) {
-        return [];
-      }
-      const response = await instance.get(`api/water/day/${date}`);
-      return response.data.WaterData;
+      const state = thunkAPI.getState();
+
+      const persistedToken = state.auth.token;
+      // sortOrder=asc&sortBy=_id
+      const response = await axiosGet(
+        `water/monthly`,
+        {
+          month: date,
+          sortOrder: 'asc',
+          sortBy: 'time',
+        },
+        {
+          Authorization: `Bearer ${persistedToken}`, // Додайте заголовок Authorization, якщо потрібен
+        }
+      );
+      return response.water.data;
     } catch (error) {
-      console.log(error);
+      if (
+        error.status === 404 &&
+        error.data.message === 'Entries of water not found'
+      ) {
+        // Обробка ситуації, коли даних немає
+        return [];
+      }
       return thunkAPI.rejectWithValue(error.message);
     }
-  },
+  }
 );
 
-export const addWater = createAsyncThunk(
-  'water/addWater',
-  async (newNote, thunkAPI) => {
-    if (newNote.date > new Date().getTime()) {
-      toastMaker("You can't drink water in the future", 'error');
-      return;
-    }
-
-    if (newNote.date < 1672524000) {
-      toastMaker('You cannot select a date before 01.01.2023', 'error');
-      return;
-    }
-
+export const getDaily = createAsyncThunk(
+  'water/getDaily',
+  async (fullDate, thunkAPI) => {
     try {
-      const response = await instance.post('api/water', newNote);
+      const state = thunkAPI.getState();
+
+      const persistedToken = state.auth.token;
+
+      const response = await axiosGet(
+        `water/daily`,
+        {
+          date: fullDate,
+          sortOrder: 'asc',
+          sortBy: 'time',
+        },
+        {
+          Authorization: `Bearer ${persistedToken}`, // Додайте заголовок Authorization, якщо потрібен
+        }
+      );
+
+      return response.water.data;
+    } catch (error) {
+      if (
+        error.status === 404 &&
+        error.data.message === 'Entries of water not found'
+      ) {
+        // Обробка ситуації, коли даних немає
+        return [];
+      }
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const postDaily = createAsyncThunk(
+  'water/postDaily',
+  async (credentials, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState();
+
+      const persistedToken = state.auth.token;
+
+      const response = await axiosPost(`water`, credentials, {
+        Authorization: `Bearer ${persistedToken}`, // Додайте заголовок Authorization, якщо потрібен
+      });
+
       return response.data;
     } catch (error) {
-      console.log(error);
       return thunkAPI.rejectWithValue(error.message);
     }
-  },
+  }
 );
 
-export const deleteWater = createAsyncThunk(
-  'water/deleteWater',
+export const delWater = createAsyncThunk(
+  'water/delWater',
   async (id, thunkAPI) => {
     try {
-      const response = await instance.delete(`api/water/${id}`);
+      const state = thunkAPI.getState();
+
+      const persistedToken = state.auth.token;
+
+      const response = await axiosDel(`water/${id}`, {
+        Authorization: `Bearer ${persistedToken}`, // Додайте заголовок Authorization, якщо потрібен
+      });
+
+      return id;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const patchWater = createAsyncThunk(
+  'water/patchtWater',
+  async ({ id, patchedData }, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState();
+
+      const persistedToken = state.auth.token;
+
+      const response = await axiosPatch(`water/${id}`, patchedData, {
+        Authorization: `Bearer ${persistedToken}`, // Додайте заголовок Authorization, якщо потрібен
+      });
+
       return response.data;
     } catch (error) {
-      console.log(error);
       return thunkAPI.rejectWithValue(error.message);
     }
-  },
+  }
 );
 
-export const editWater = createAsyncThunk(
-  'water/editWater',
-  async ({ id, newNote }, thunkAPI) => {
+export const getTodayWater = createAsyncThunk(
+  'water/getTodayWater',
+  async (_, thunkAPI) => {
     try {
-      const response = await instance.put(`api/water/${id}`, newNote);
-      return response.data;
+      const currentTime = new Date().toISOString();
+
+      const [chosenFullDate] = currentTime.split('T');
+      const [chosenYear, chosenMonth, chosenDay] = chosenFullDate.split('-');
+
+      const date = `${chosenYear}-${chosenMonth}-${chosenDay}`;
+
+      const state = thunkAPI.getState();
+
+      const persistedToken = state.auth.token;
+
+      const response = await axiosGet(
+        `water/daily`,
+        {
+          date,
+          sortOrder: 'asc',
+          sortBy: 'time',
+        },
+        {
+          Authorization: `Bearer ${persistedToken}`, // Додайте заголовок Authorization, якщо потрібен
+        }
+      );
+
+      return response.water.data;
     } catch (error) {
-      console.log(error);
       return thunkAPI.rejectWithValue(error.message);
     }
-  },
+  }
 );
-
-export const getMonthInfo = createAsyncThunk(
-  'water/getMonthInfo',
-  async (date, thunkAPI) => {
-    try {
-      const { data } = await instance.get(`api/water/month/${date}`);
-      return data;
-    } catch (error) {
-      console.log(error);
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  },
-);
-
-export default { deleteWater, getDayWater, addWater };

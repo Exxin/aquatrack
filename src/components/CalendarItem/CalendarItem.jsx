@@ -1,35 +1,43 @@
 import clsx from 'clsx';
-import css from '../CalendarItem/CalendarItem.module.css';
-import { selectUserWaterNorm } from '../../redux/user/selectors';
-import { useSelector } from 'react-redux';
+import css from './CalendarItem.module.css';
+import { useDispatch } from 'react-redux';
+import { getDaily } from '../../redux/water/operations';
+import { setChosenDate } from '../../redux/water/slice';
 
-export default function CalendarItem({ item, activeDay, index }) {
-  const countWater = useSelector(selectUserWaterNorm);
-  const calculateWaterPercentage = totalDayWater => {
-    if (!countWater) {
-      return 0;
-    }
-    const countWaterMilliliters = countWater * 1000;
-    const percentage = (totalDayWater / countWaterMilliliters) * 100;
-    let rounded = percentage.toFixed(1);
-    return rounded.endsWith('.0') ? parseInt(rounded, 10) : parseFloat(rounded);
+export const CalendarItem = ({ data }) => {
+  const dispatch = useDispatch();
+
+  const [chosenFullDate] = data.chosenDate.split('T');
+  const [chosenYear, chosenMonth, chosenDay] = chosenFullDate.split('-');
+
+  const [clickedFullDate] = data.clickedDay.split('T');
+  const [clickedYear, clickedMonth, clickedDay] = clickedFullDate.split('-');
+
+  const isChosenDay = chosenDay == data.date;
+
+  const handleClick = () => {
+    const date = `${clickedYear}-${clickedMonth}-${clickedDay}`;
+
+    dispatch(getDaily(date));
+
+    dispatch(setChosenDate(data.clickedDay));
   };
 
   return (
-    <div className={css.container}>
-      <button
-        className={clsx(
-          css.button,
-          item.dateParam == activeDay && css.activeButton,
-          calculateWaterPercentage(item.totalDayWater) >= 100 &&
-            css.fullDayButton,
-        )}
+    <button
+      className={css.button}
+      disabled={!data.isEnabled}
+      onClick={handleClick}
+    >
+      <p
+        className={clsx(css.date, {
+          [css.full]: data.waterPercentage >= 100,
+          [css.current]: isChosenDay,
+        })}
       >
-        {index + 1}
-      </button>
-      <span className={css.label}>
-        {calculateWaterPercentage(item?.totalDayWater)}%
-      </span>
-    </div>
+        {data.date}
+      </p>
+      <p className={css.percentage}>{data.waterPercentage}%</p>
+    </button>
   );
-}
+};

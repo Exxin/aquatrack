@@ -1,19 +1,26 @@
-import css from '../TrackerPage/TrackerPage.module.css';
-import WaterMainInfo from '../../components/WaterMainInfo/WaterMainInfo';
+import WaterMainInfo from '../../components/waterMainInfo/WaterMainInfo';
 import WaterDetailedInfo from '../../components/WaterDetailedInfo/WaterDetailedInfo';
-import { useDispatch } from 'react-redux';
-import { useEffect } from 'react';
-import { fetchUser } from '../../redux/user/operations';
 
-export default function TrackerPage() {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchUser());
-  }, [dispatch]);
+import Container from '../../components/Container/Container';
+import DocTitle from '../../components/DocTitle';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { getUserInfo } from '../../redux/user/operations';
+
+const TrackerPage = () => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+      dispatch(getUserInfo());
+    }, [dispatch]);
+  
   return (
-    <div className={css.trackerContainer}>
+    <Container>
+      <DocTitle>Home</DocTitle>
       <WaterMainInfo />
       <WaterDetailedInfo />
-    </div>
+    </Container>
   );
-}
+};
+
+export default TrackerPage;

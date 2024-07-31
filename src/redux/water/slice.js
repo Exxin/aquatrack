@@ -1,126 +1,99 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
-  addWater,
-  getDayWater,
-  deleteWater,
-  editWater,
-  getMonthInfo,
+  delWater,
+  getDaily,
+  getMonthly,
+  getTodayWater,
+  patchWater,
+  postDaily,
 } from './operations';
-import { logout } from '../user/operations';
 
-const slice = createSlice({
+const handlePending = state => {
+  state.loading = true;
+  state.error = null;
+};
+
+const handleRejected = (state, action) => {
+  state.loading = false;
+  state.error = action.payload;
+};
+
+const waterInitialState = {
+  chosenDate: new Date().toISOString(),
+  monthly: [],
+  daily: [],
+  today: [],
+  loading: true,
+  error: null,
+};
+
+const waterSlice = createSlice({
   name: 'water',
-  initialState: {
-    activeDay: '',
-    dayWater: { date: '', water: [] },
-    mounthWater: [],
-    currentDay: [],
-    loading: false,
-  },
+  initialState: waterInitialState,
   reducers: {
-    setActiveDay: (state, action) => {
-      state.activeDay = action.payload;
+    //save chosenDay for editting or adding entries
+    setChosenDate: (state, action) => {
+      state.chosenDate = action.payload;
     },
   },
-  extraReducers: builder =>
+
+  extraReducers: builder => {
     builder
-      .addCase(addWater.pending, state => {
-        state.loading = true;
-      })
-      .addCase(addWater.fulfilled, (state, action) => {
-        state.loading = false;
-
-        const date = new Date(action.payload.date);
-        date.setUTCHours(0, 0, 0, 0);
-        const requestDate = date.toISOString();
-
-        state.dayWater.date = state.activeDay;
-
-        if (state.dayWater.date === requestDate) {
-          state.dayWater.water.push(action.payload);
-        }
-
-        const currentDate = new Date();
-        currentDate.setUTCHours(0, 0, 0, 0);
-        const currentDay = currentDate.toISOString();
-
-        if (currentDay === requestDate) {
-          state.currentDay.push(action.payload);
-        }
-      })
-      .addCase(addWater.rejected, state => {
+      // getMonthly
+      .addCase(getMonthly.pending, handlePending)
+      .addCase(getMonthly.fulfilled, (state, action) => {
+        state.monthly = action.payload;
         state.loading = false;
       })
-      .addCase(getDayWater.pending, state => {
-        state.loading = true;
-      })
-      .addCase(getDayWater.fulfilled, (state, action) => {
+      .addCase(getMonthly.rejected, handleRejected)
+      //getDaily
+      .addCase(getDaily.pending, handlePending)
+      .addCase(getDaily.fulfilled, (state, action) => {
+        state.daily = action.payload;
         state.loading = false;
-        state.dayWater.water = action.payload.flat();
-
-        if (action.payload.length > 0) {
-          const date = new Date(action.payload[0].date);
-          date.setUTCHours(0, 0, 0, 0);
-          const requestDate = date.toISOString();
-
-          const currentDate = new Date();
-          currentDate.setUTCHours(0, 0, 0, 0);
-          const currentDay = currentDate.toISOString();
-
-          if (currentDay === requestDate) {
-            state.currentDay = action.payload.flat();
+      })
+      .addCase(getDaily.rejected, handleRejected)
+      //postDaily
+      .addCase(postDaily.pending, handlePending)
+      .addCase(postDaily.fulfilled, (state, action) => {
+        state.daily = [...state.daily, action.payload];
+        state.loading = false;
+      })
+      .addCase(postDaily.rejected, handleRejected)
+      //deleteWater
+      .addCase(delWater.pending, handlePending)
+      .addCase(delWater.fulfilled, (state, action) => {
+        state.loading = false;
+        state.daily = state.daily.filter(item => {
+          return item._id !== action.payload;
+        });
+        state.today = state.daily.filter(item => {
+          return item._id !== action.payload;
+        });
+      })
+      .addCase(delWater.rejected, handleRejected)
+      //patchWater
+      .addCase(patchWater.pending, handlePending)
+      .addCase(patchWater.fulfilled, (state, action) => {
+        state.loading = false;
+        state.daily = state.daily.map(item => {
+          if (item._id === action.payload._id) {
+            return { ...item, ...action.payload };
           }
-        }
+          return item;
+        });
       })
-      .addCase(getDayWater.rejected, state => {
-        state.loading = false;
-        state.dayWater.water = [];
-      })
-      .addCase(deleteWater.pending, state => {
-        state.loading = true;
-      })
-      .addCase(deleteWater.fulfilled, (state, action) => {
-        state.loading = false;
-        state.dayWater.water = state.dayWater.water.filter(
-          item => item._id !== action.payload._id,
-        );
-        state.currentDay = state.currentDay.filter(
-          item => item._id !== action.payload._id,
-        );
-      })
-      .addCase(deleteWater.rejected, state => {
+      .addCase(patchWater.rejected, handleRejected)
+      //getTodayWater
+      .addCase(getTodayWater.pending, handlePending)
+      .addCase(getTodayWater.fulfilled, (state, action) => {
+        state.today = action.payload;
         state.loading = false;
       })
-      .addCase(editWater.pending, state => {
-        state.loading = true;
-      })
-      .addCase(editWater.fulfilled, (state, action) => {
-        state.loading = false;
-        state.dayWater.water = state.dayWater.water.map(item =>
-          item._id === action.payload._id ? action.payload : item,
-        );
-        state.currentDay = state.currentDay.map(item =>
-          item._id === action.payload._id ? action.payload : item,
-        );
-      })
-      .addCase(editWater.rejected, state => {
-        state.loading = false;
-      })
-      .addCase(logout.fulfilled, state => {
-        state.dayWater.water = [];
-        state.currentDay = [];
-      })
-      .addCase(getMonthInfo.pending, state => {
-        state.loading = true;
-      })
-      .addCase(getMonthInfo.fulfilled, (state, action) => {
-        state.loading = false;
-        state.mounthWater = action.payload;
-      })
-      .addCase(getMonthInfo.rejected, state => {
-        state.loading = false;
-      }),
+      .addCase(getTodayWater.rejected, handleRejected);
+  },
 });
 
-export default slice.reducer;
-export const { setActiveDay } = slice.actions;
+export const waterReducer = waterSlice.reducer;
+
+export const { setChosenDate } = waterSlice.actions;

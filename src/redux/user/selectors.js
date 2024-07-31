@@ -1,9 +1,5 @@
-export const selectIsLoading = state => state.user.isLoading;
-export const selectIsRefreshing = state => state.user.isRefreshing;
-export const selectUser = state => state.user.user;
-export const selectIsLoggedIn = state => state.user.isLoggedIn;
-export const selectUserWaterNorm = state => state.user.user.liters;
-export const selectUserToken = state => state.user.token;
-export const selectRefreshToken = state => state.user.refreshToken;
-
-export default { selectUser };
+export const selectUser = state => state.users.user;
+export const selectAllUsersCount = state => state.users.usersCount;
+export const selectUserLoading = state => state.users.loading;
+export const selectUserError = state => state.users.error;
+export const selectWaterDailyNorma = state => state.users.user.waterAmount;

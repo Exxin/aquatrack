@@ -1,126 +1,96 @@
-.list_water_items {
-  display: flex;
-  gap: 17px;
-  overflow-x: auto;
-  padding-left: 0;
-  margin-bottom: 0;
-  padding-bottom: 24px;
-  margin-top: 24px;
-}
-
-.modalClsBtn {
-  top: 20px;
-}
-
-.water_item {
-  flex: none;
-  background-color: var(--main-white);
-  border-radius: 10px;
+.item {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  box-shadow: 0 2px 4px var(--shadow);
+  /* border: 2px solid red; */
+  /* padding: 18px 14px; */
+  background: var(--main-white);
+  gap: 8px;
+  border-radius: 15px;
+  width: 149px;
+  height: 74px;
 }
 
-.text_ {
-  font-family: var(--font-family);
-  color: var(--main-placeholder);
-  font-size: 14px;
-  line-height: 18px;
-}
-
-.text_Uk {
-  font-family: var(--font-family);
-  color: var(--main-placeholder);
-  font-size: 14px;
-  line-height: 18px;
-}
-
-.water_item_content {
+.water {
   display: flex;
-  align-items: center;
-  gap: 20px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
 }
 
-.water_item strong {
-  font-size: 16px;
+.edit {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.volume {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 100%;
   color: var(--main);
 }
 
-.date {
+.time {
+  font-weight: 400;
   font-size: 12px;
-  color: var(--main-text);
-  margin-top: 5px;
+  line-height: 100%;
+  color: rgba(47, 47, 47, 0.6);
 }
 
-.editButton,
-.deleteButton {
-  background: none;
-  border: none;
-  cursor: pointer;
+.iconGlass {
+  width: 38px;
+  height: 38px;
 }
 
-.container_buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+.btnEdit {
+  width: 14x;
+  height: 14px;
+  background-color: transparent;
+}
+.btnTrash {
+  width: 14px;
+  height: 14px;
+  background-color: transparent;
 }
 
-.svg_edit {
-  fill: none;
-  stroke: var(--main);
-  stroke-width: 2px;
-}
+@media screen and (min-width: 768px) {
+  .item {
+    gap: 20px;
+    width: 192px;
+    height: 86px;
+  }
 
-.svg_delete {
-  fill: none;
-  stroke: var(--main);
-  stroke-width: 2px;
-}
+  .water {
+    gap: 0;
+  }
 
-.icon_glass_water {
-  fill: var(--accent);
-  stroke: var(--accent);
-  stroke-width: 0;
-}
+  .edit {
+    gap: 14px;
+  }
 
-.container_without_water {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-top: 24px;
-  margin-bottom: 30px;
-  background-color: var(--main-white);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  box-shadow: 0 2px 4px var(--shadow);
-  height: 89px;
-}
+  .volume {
+    font-size: 15px;
+    line-height: 149%;
+  }
 
-/* Основний скролбар */
-::-webkit-scrollbar {
-  width: 10px; /* ширина вертикального скролбару */
-  height: 10px; /* висота горизонтального скролбару */
-  transition: all var(--transition);
-}
+  .time {
+    line-height: 187%;
+  }
 
-/* Фон скролбару */
-::-webkit-scrollbar-track {
-  background: var(--main-white); /* колір фону */
-  border-radius: 10px; /* округлення */
-}
+  .iconGlass {
+    width: 44px;
+    height: 45px;
+  }
 
-/* Сам повзунок */
-::-webkit-scrollbar-thumb {
-  background: var(--main); /* колір повзунка */
-  border-radius: 10px; /* округлення */
-}
+  .btnEdit {
+    width: 16x;
+    height: 16px;
+  }
 
-/* Повзунок при наведенні */
-::-webkit-scrollbar-thumb:hover {
-  background: var(--main-text); /* колір повзунка при наведенні */
+  .btnTrash {
+    width: 16px;
+    height: 16px;
+  }
 }

@@ -1,52 +1,32 @@
-import css from '../UserBarPopover/UserBarPopover.module.css';
-import Icon from '../../shared/components/Icon/Icon';
+import Icon from '../Icon/Icon';
+import css from './UserBarPopover.module.css';
 
-import { useTranslation } from 'react-i18next';
-import '../../translate/index.js';
-import clsx from 'clsx';
-
-export default function UserBarPopover({
-  closePopover,
-  openSettingModal,
-  openLogoutModal,
-}) {
-  const onLogoutClick = () => {
-    openLogoutModal(true);
-    closePopover(false);
-  };
-  const onSettingClick = () => {
-    openSettingModal(true);
-    closePopover(false);
-  };
-  const { t, i18n } = useTranslation();
-
+const UserBarPopover = ({ openSettingModal, openLogOutModal }) => {
   return (
-    <div className={css.wrap}>
-      <button
-        className={clsx(css.settingBtn, {
-          [css.settingBtnUk]: i18n.language === 'uk',
-        })}
-        type="button"
-        onClick={onSettingClick}
-      >
+    <div className={css.userBarPopoverContainer}>
+      <button type="button" onClick={openSettingModal} className={css.settings}>
         <Icon
-          id="settings"
-          width="15"
-          height="15"
-          className={css.settingIcon}
+          id={'settings'}
+          width={'16px'}
+          height={'16px'}
+          fillColor={'#323f47'}
+          className={css.iconSettings}
         />
-        {t('Setting user')}
+        Setting
       </button>
-      <button
-        className={clsx(css.logoutBtn, {
-          [css.logoutBtnUk]: i18n.language === 'uk',
-        })}
-        type="button"
-        onClick={onLogoutClick}
-      >
-        <Icon id="logOut" width="15" height="15" className={css.logoutIcon} />
-        {t('Log out')}
+
+      <button type="button" onClick={openLogOutModal} className={css.logOut}>
+        <Icon
+          id={'log-out'}
+          width={'16px'}
+          height={'16px'}
+          fillColor={'rgba(50, 63, 71, 0.4)'}
+          className={css.iconLogOut}
+        />
+        Log out
       </button>
     </div>
   );
-}
+};
+
+export default UserBarPopover;

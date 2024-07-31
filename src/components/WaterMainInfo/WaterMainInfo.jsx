@@ -1,18 +1,19 @@
-import css from '../WaterMainInfo/WaterMainInfo.module.css';
-import WaterDailyNorma from '../../components/WaterDailyNorma/WaterDailyNorma';
-import WaterProgressBar from '../../components/WaterProgressBar/WaterProgressBar';
-import AddWaterBtn from '../../shared/components/AddWaterBtn/AddWaterBtn';
-import Logo from '../../shared/components/Logo/Logo';
+import WaterDailyNorma from '../waterDailyNorma/WaterDailyNorma.jsx';
+import WaterProgressBar from '../waterProgressBar/WaterProgressBar.jsx';
+import MainAddWaterBtn from '../MainAddWaterBtn/MainAddWaterBtn.jsx';
 
-export default function WaterMainInfo() {
+import css from './WaterMainInfo.module.css';
+import LogoLink from '../LogoLink/LogoLink.jsx';
+
+const WaterMainInfo = () => {
   return (
-    <div className={css.WaterMainInfoContainer}>
-      <div className={css.logoWraper}>
-        <Logo />
-      </div>
+    <div className={css.waterMainContainer}>
+      <LogoLink />
       <WaterDailyNorma />
       <WaterProgressBar />
-      <AddWaterBtn />
+      <MainAddWaterBtn />
     </div>
   );
-}
+};
+
+export default WaterMainInfo;

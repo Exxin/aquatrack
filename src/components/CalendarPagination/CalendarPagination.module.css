@@ -1,48 +1,58 @@
-.paginationContainer {
+.dateWrapper {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 16px;
+  height: 24px;
 }
-.buttonsContainer {
+
+.dateTitle {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.28571;
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: #323f47;
+}
+.buttonLt,
+.buttonGt {
+  background-color: inherit;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 178px;
-}
-.button {
-  display: flex;
-  justify-content: center;
-  border: none;
-  background-color: transparent;
-}
-.title {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 18px;
-  letter-spacing: -1%;
 }
 
-.titleUk {
-  font-family: var(--font-family);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 18px;
-  letter-spacing: -1%;
+.iconGt {
+  transform: rotate(-90deg);
 }
 
-.icon {
-  stroke: var(--accent);
-  transition: all var(--transition);
+.iconLt {
+  transform: rotate(90deg);
 }
-.iconIsNotActive {
-  opacity: 0.4;
+
+@media screen and (min-width: 375px) {
+  .dateTitle {
+    width: 120px;
+  }
 }
+
 @media screen and (min-width: 768px) {
-  .buttonsContainer {
-    width: 200px;
+  .dateWrapper {
+    gap: 20px;
+    height: 32px;
   }
-  .title {
+
+  .dateTitle {
     font-size: 16px;
-    line-height: 24px;
+    line-height: 1.5;
+    width: 136px;
   }
+}
+
+.next-icon {
+  cursor: pointer;
+}
+
+.next-icon.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }

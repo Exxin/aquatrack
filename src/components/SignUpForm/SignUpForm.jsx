@@ -1,216 +1,157 @@
-import { useState } from 'react';
+import React, { useId, useState } from 'react';
+import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import css from '../SignUpForm/SignUpForm.module.css';
-import Icon from '../../shared/components/Icon/Icon';
-import clsx from 'clsx';
-import { useDispatch, useSelector } from 'react-redux';
-import { register as registerUser } from '../../redux/user/operations';
-import GoogleAuthBtn from '../../shared/components/GoogleAuthBtn/GoogleAuthBtn';
-import { selectIsLoading } from '../../redux/user/selectors';
-import DotLoader from '../../shared/components/DotLoader/DotLoader.jsx';
-import { useTranslation } from 'react-i18next';
-import '../../translate/index.js';
-import SignUpModal from '../SignUpModal/SignUpModal.jsx';
-import Modal from '../../shared/components/Modal/Modal.jsx';
+import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import css from './SignUpForm.module.css';
+import { signUp } from '../../redux/auth/operations';
+import { Notify } from 'notiflix/build/notiflix-notify-aio.js';
+import LogoLink from '../LogoLink/LogoLink';
+import Icon from '../Icon/Icon';
 
-const schema = yup.object().shape({
-  email: yup.string().email('Invalid email').required('Email is required'),
-  password: yup
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .required('Password is required'),
-  repeatPassword: yup
-    .string()
-    .oneOf([yup.ref('password'), null], 'Passwords must match')
-    .required('Repeat Password is required'),
+const emailRegExp = /^[\w.-]+@[a-zA-Z]+\.[a-zA-Z]{2,}$/;
+
+const minPasswordLength = 8;
+const maxPasswordLength = 32;
+
+const registrationSchema = Yup.object({
+  email: Yup.string()
+    .required('Email is required!')
+    .matches(emailRegExp, 'Entered email address is not valid')
+    .email('Please enter a valid email address!'),
+  password: Yup.string()
+    .required('Password is required!')
+    .min(minPasswordLength, 'Too short')
+    .max(maxPasswordLength, 'Too long'),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref('password'), null], 'Passwords must match')
+    .required('Please confirm your password'),
 });
 
-export default function SignUpForm() {
-  const dispatch = useDispatch();
+const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const isLoading = useSelector(selectIsLoading);
-  const { t, i18n } = useTranslation();
+  const emailId = useId();
+  const passwordId = useId();
+  const repeatPasswordId = useId();
+  const dispatch = useDispatch();
 
-  // об'єкт конфігурації параметрів хука useForm
+  const toggleVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm({
-    resolver: yupResolver(schema),
-    mode: 'onChange',
+    resolver: yupResolver(registrationSchema),
   });
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleFormSubmit = data => {
-    const { email, password } = data;
-
-    dispatch(registerUser({ email, password }))
-      .then(action => {
-        if (registerUser.fulfilled.match(action)) {
-          // toast.success('Register successful');
-          reset();
-          setIsModalOpen(true);
-        }
-        // else if (registerUser.rejected.match(action)) {
-        //   const errorMessage = action.payload?.message || 'Login failed';
-        //   const statusCode = action.payload ? action.payload.statusCode : null;
-
-        //   console.error(
-        //     `Login failed with status code ${statusCode}: ${errorMessage}`,
-        //   );
-        // }
+  const onSubmit = data => {
+    dispatch(
+      signUp({
+        email: data.email,
+        password: data.password,
       })
-      .catch(error => {
-        console.error('Unexpected error:', error);
-      });
-  };
-
-  // const handleModalConfirm = () => {
-  //   Логика при нажатии кнопки "Pease verify emai" в модалке
-  //   dispatch(logout())
-  //     .unwrap()
-  //     .then(() => setIsModalOpen(false))
-  //     .catch(() => toast.error(t('Sorry, try again later')));
-  // };
-
-  const handleModalCancel = () => {
-    // Логика при нажатии кнопки "Cancel" в модалке
-    setIsModalOpen(false);
+    )
+      .unwrap()
+      .then(() => Notify.success('Registration success!'))
+    reset();
   };
 
   return (
-    <>
-      {isModalOpen && (
-        <Modal
-          children={<SignUpModal />}
-          isOpen={setIsModalOpen}
-          onClose={handleModalCancel}
-          // btnClassName={''}
-        />
-      )}
-      <form className={css.form} onSubmit={handleSubmit(handleFormSubmit)}>
-        <div
-          className={clsx(css.inputGroup, {
-            [css.inputGroupUk]: i18n.language === 'uk',
-          })}
-        >
-          <label>{t('Email user')}</label>
-          <input
-            type="text"
-            placeholder={t('Enter email')}
-            name="email"
-            autoComplete="off"
-            className={clsx(
-              css.inputGroupInput,
-              errors.email && css.inputError,
-              {
-                [css.inputGroupInputUk]: i18n.language === 'uk',
-              },
-            )}
-            {...register('email')}
-          />
-          {errors.email && <p className={css.error}>{errors.email.message}</p>}
-        </div>
-        <div
-          className={clsx(css.inputGroup, {
-            [css.inputGroupUk]: i18n.language === 'uk',
-          })}
-        >
-          <label>{t('Password user')}</label>
-          <div className={css.passwordContainer}>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder={t('Enter password')}
-              name="password"
-              autoComplete="new-password"
-              className={clsx(
-                css.inputGroupInput,
-                errors.email && css.inputError,
-                {
-                  [css.inputGroupInputUk]: i18n.language === 'uk',
-                },
-              )}
-              {...register('password')}
-            />
-            <button
-              type="button"
-              className={css.passwordToggle}
-              onClick={toggleShowPassword}
-              tabIndex="-1"
-            >
-              {showPassword ? (
-                <Icon className={css.icon} id="eye" width={20} height={20} />
-              ) : (
-                <Icon className={css.icon} id="eyeOff" width={20} height={20} />
-              )}
-            </button>
+    <div className={css.signUpContainer}>
+      <LogoLink />
+      <div className={css.formContainer}>
+        <h2 className={css.title}>Sign Up</h2>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className={css.inputContainer}>
+            <div className={css.inputItem}>
+              <label htmlFor={emailId} className={css.label}>
+                Email
+              </label>
+              <input
+                id={emailId}
+                type="email"
+                className={`${css.field} ${errors.email ? css.errorField : ''}`}
+                {...register('email')}
+                placeholder="Enter your email"
+              />
+              <p className={css.error}>
+                {errors.email?.message}
+              </p>
+            </div>
+            <div className={css.inputItem}>
+              <label htmlFor={passwordId} className={css.label}>
+                Password
+              </label>
+              <input
+                id={passwordId}
+                {...register('password')}
+                type={showPassword ? 'text' : 'password'}
+                className={`${css.field} ${
+                  errors.password ? css.errorField : ''
+                }`}
+                placeholder="Enter your password"
+              />
+              <button
+                type="button"
+                onClick={() => toggleVisibility('password')}
+                className={css.toggleVisibility}
+              >
+                {showPassword ? (
+                  <Icon id="eye" width={20} height={20} />
+                ) : (
+                  <Icon id="eye-off" width={20} height={20} />
+                )}
+              </button>
+              <p className={css.error}>
+                {errors.password?.message}
+              </p>
+            </div>
+            <div className={css.inputItem}>
+              <label htmlFor={repeatPasswordId} className={css.label}>
+                Repeat password
+              </label>
+              <input
+                id={repeatPasswordId}
+                {...register('confirmPassword')}
+                type={showPassword ? 'text' : 'password'}
+                className={`${css.field} ${
+                  errors.confirmPassword ? css.errorField : ''
+                }`}
+                placeholder="Repeat your password"
+              />
+              <button
+                type="button"
+                onClick={() => toggleVisibility('password')}
+                className={css.toggleVisibility}
+              >
+                {showPassword ? (
+                  <Icon id="eye" width={20} height={20} />
+                ) : (
+                  <Icon id="eye-off" width={20} height={20} />
+                )}
+              </button>
+              <p className={css.error}>
+                {errors.confirmPassword?.message}
+              </p>
+            </div>
           </div>
-          {errors.password && (
-            <p className={css.error}>{errors.password.message}</p>
-          )}
-        </div>
-        <div
-          className={clsx(css.inputGroup, {
-            [css.inputGroupUk]: i18n.language === 'uk',
-          })}
-        >
-          <label>{t('Repeat password')}</label>
-          <div className={css.passwordContainer}>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder={t('Repeat password')}
-              name="repeatPassword"
-              autoComplete="password-confirmation"
-              {...register('repeatPassword')}
-              className={clsx(
-                css.inputGroupInput,
-                errors.email && css.inputError,
-                {
-                  [css.inputGroupInputUk]: i18n.language === 'uk',
-                },
-              )}
-            />
-            <button
-              type="button"
-              className={css.passwordToggle}
-              onClick={toggleShowPassword}
-              tabIndex="-1"
-            >
-              {showPassword ? (
-                <Icon className={css.icon} id="eye" width={20} height={20} />
-              ) : (
-                <Icon className={css.icon} id="eyeOff" width={20} height={20} />
-              )}
-            </button>
-          </div>
-          {errors.repeatPassword && (
-            <p className={css.error}>{errors.repeatPassword.message}</p>
-          )}
-        </div>
 
-        <button
-          className={clsx(css.submitButton, {
-            [css.submitButtonUk]: i18n.language === 'uk',
-          })}
-          type="submit"
-          disabled={!isValid}
-        >
-          {isLoading ? (
-            <DotLoader text="Signing Up" />
-          ) : (
-            t('Register user form')
-          )}
-        </button>
-        <GoogleAuthBtn />
-      </form>
-    </>
+          <input type="submit" className={css.button} value="Sign Up" />
+        </form>
+        <p className={css.redirect}>
+          Already have account?{' '}
+          <Link to="/signin" className={css.redirectLink}>
+            Sign In
+          </Link>
+        </p>
+      </div>
+    </div>
   );
-}
+};
+
+export default SignUpForm;

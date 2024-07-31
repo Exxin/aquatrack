@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+
 import {
   persistStore,
   persistReducer,
@@ -10,20 +11,22 @@ import {
   REGISTER,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import userReducer from './user/slice';
-import waterReducer from './water/slice';
+import { authReducer } from './auth/slice';
+import { usersReducer } from './user/slice';
+import { waterReducer } from './water/slice';
 
-const userPersistConfig = {
-  key: 'user',
+// Persisting token field from auth slice to localstorage
+const authPersistConfig = {
+  key: 'auth',
   storage,
-  whitelist: ['refreshToken'], // вказати яку властивість зберігти, поки що додав тільки токен
+  whitelist: ['token'],
 };
-const persistedUserReducer = persistReducer(userPersistConfig, userReducer);
 
 export const store = configureStore({
   reducer: {
-    user: persistedUserReducer,
+    auth: persistReducer(authPersistConfig, authReducer),
     water: waterReducer,
+    users: usersReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

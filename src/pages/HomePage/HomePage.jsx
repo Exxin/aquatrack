@@ -1,11 +1,18 @@
-import AdvantagesSection from '../../components/AdvantagesSection/AdvantagesSection';
-import WelcomeSection from '../../components/WelcomeSection/WelcomeSection';
-import css from './HomePage.module.css';
-export default function HomePage() {
+import DocTitle from '../../components/DocTitle.jsx';
+import Container from '../../components/Container/Container.jsx';
+import HomeSection from '../../components/HomeSection/HomeSection.jsx';
+import AdvantagesSection from '../../components/AdvantagesSection/AdvantagesSection.jsx';
+
+const WelcomePage = () => {
+
+  
   return (
-    <div className={css.homeContainer}>
-      <WelcomeSection />
+    <Container>
+      <DocTitle>Aquatrack</DocTitle>
+      <HomeSection />
       <AdvantagesSection />
-    </div>
+    </Container>
   );
-}
+};
+
+export default WelcomePage;

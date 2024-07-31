@@ -1,318 +1,299 @@
-import css from '../UserSettingsForm/UserSettingsForm.module.css';
+import { useEffect, useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import clsx from 'clsx';
-import FormulaDescription from './FormulaDescription';
-import { useEffect, useState } from 'react';
+import * as Yup from 'yup';
+import style from './UserSettingsForm.module.css';
+import Icon from '../Icon/Icon';
+import avatar from '../../img/avatar.png';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 import { useDispatch, useSelector } from 'react-redux';
+import { patchUserInfo } from '../../redux/user/operations';
 import { selectUser } from '../../redux/user/selectors';
-import { updateUser } from '../../redux/user/operations';
-import toastMaker from '../../shared/helpers/toastMaker/toastMaker.jsx';
-import { isNumberAndDot, maxNumber } from '../../helpers/validationsHelper';
-import { useTranslation } from 'react-i18next';
-import '../../translate/index.js';
-import AppSettingsForm from '../AppSettingsForm/AppSettingsForm.jsx';
-import { IoIosArrowDown } from 'react-icons/io';
 
-const schema = yup.object().shape({
-  gender: yup.string().required('Option is required'),
-  email: yup
-    .string()
-    .email('Please, enter valid email')
-    .required('Email is required'),
-  name: yup
-    .string()
-    .required('Name is required')
-    .min(3, 'Too short! Minimum 3 symbols')
-    .max(30, 'Too long! Maximum 30 symbols'),
-  weight: yup.number().max(150, 'Maximum 150 kg'),
-  activeTime: yup.number().max(24, 'Maximum 24 hours'),
-  liters: yup.number().max(10, 'Maximum 10 liters'),
+const schemaYup = Yup.object().shape({
+  photo: Yup.mixed(),
+  gender: Yup.string().oneOf(['woman', 'man']),
+  name: Yup.string()
+    .trim()
+    .min(2, 'Minimal 2 symbols!')
+    .max(20, 'Max 20 symbols!'),
+  email: Yup.string().trim().email('Invalid email format').required(),
+  weight: Yup.number()
+    .min(0, 'Kilograms cannot be negative')
+    .max(300, 'Max 300 kilograms!')
+    .transform(value => (isNaN(value) ? 0 : value)),
+  sportHours: Yup.number('Write a number')
+    .min(0, 'Sport hours cannot be negative')
+    .max(24, 'Max 24 hours')
+    .transform(value => (isNaN(value) ? 0 : value)),
+  waterAmount: Yup.number()
+    .min(0, 'Water amount must be a positive number')
+    .max(16, 'Drinking more than 16 liters of water per day is dangerous')
+    .transform(value => (isNaN(value) ? 0 : value)),
 });
 
-export default function UserSettingsForm({ isModalOpen }) {
-  const [gender, setGender] = useState('');
-  const [activity, setActivity] = useState(0);
-  const [weight, setWeight] = useState(0);
-  const [waterVolume, setWaterVolume] = useState(0);
-  const [liters, setLiters] = useState(0);
+const UserSettingsForm = ({ onCloseModal }) => {
+  const userInfo = useSelector(selectUser);
 
-  const user = useSelector(selectUser);
+  const [avatarUrl, setAvatarUrl] = useState(userInfo.photo || avatar);
+  const [waterDailyNorma, setWaterDailyNorma] = useState(1.8);
+  const [selectedFile, setSelectedFile] = useState(null);
+
   const dispatch = useDispatch();
-  const { t, i18n } = useTranslation();
+
+   const defaultValues = {
+     photo: userInfo.photo || avatar,
+     gender: userInfo.gender || 'woman',
+     name: userInfo.name || 'User',
+     email: userInfo.email || '',
+     weight: userInfo.weight || 0,
+     sportHours: userInfo.sportHours || 0,
+     waterAmount: userInfo.waterAmount || 0,
+   };
 
   const {
     register,
     handleSubmit,
-    setValue,
-    setError,
-    clearErrors,
+    watch,
     formState: { errors },
   } = useForm({
-    mode: 'onChange',
-    defaultValues: {
-      gender: `${user.gender || gender}`,
-      name: `${user.name || ''}`,
-      email: `${user.email || ''}`,
-      weight: `${user.weight || weight}`,
-      activeTime: `${user.activeTime || activity}`,
-      liters: `${user.liters || liters}`,
-    },
-    resolver: yupResolver(schema),
+    defaultValues: defaultValues,
+    resolver: yupResolver(schemaYup),
   });
 
-  useEffect(() => {
-    setGender(user.gender);
-    setActivity(user.activeTime);
-    setWeight(user.weight);
-    setLiters(user.liters);
-  }, [user]);
+  const idPhoto = useId();
+  const idGenderWoman = useId();
+  const idGenderMan = useId();
+  const idName = useId();
+  const idEmail = useId();
+  const idWeight = useId();
+  const idSportHours = useId();
+  const idWaterAmount = useId();
+
+  const weight = watch('weight');
+  const sportHours = watch('sportHours');
+  const gender = watch('gender');
 
   useEffect(() => {
-    const countWaterVolume = (gender, activity = 0, weight = 0) => {
-      let volume = 0;
-      if (gender === 'man') {
-        volume = Number(weight) * 0.03 + Number(activity) * 0.4;
-      }
-      if (gender === 'woman') {
-        volume = Number(weight) * 0.04 + Number(activity) * 0.6;
-      }
+    if (weight >= 1 && sportHours >= 0) {
+      const waterNorma =
+        gender === 'woman'
+          ? weight * 0.03 + sportHours * 0.4
+          : weight * 0.04 + sportHours * 0.6;
+      setWaterDailyNorma(waterNorma.toFixed(1));
+    }
+  }, [weight, sportHours, gender]);
 
-      setWaterVolume(volume);
-      setValue('liters', liters || volume.toFixed(1));
-    };
-
-    countWaterVolume(gender, activity, weight);
-  }, [gender, activity, weight, user, setValue, liters]);
+  const handlePhotoChange = event => {
+    const file = event.target.files[0];
+    if (file) {
+      setAvatarUrl(URL.createObjectURL(file));
+      setSelectedFile(file);
+    }
+  };
 
   const onSubmit = data => {
-    dispatch(updateUser({ _id: user._id, ...data }))
-      .unwrap()
-      .then(() => {
-        isModalOpen(false);
-        toastMaker('Profile was successfully updated', 'succes');
-      })
-      .catch(() => toastMaker('Sorry, try again later', 'error'));
+    const formData = new FormData();
+    Object.keys(data).forEach(key => {
+      formData.append(key, data[key]);
+    });
+    if (selectedFile) {
+      formData.append('photo', selectedFile); // Додавання файлу до formData
+    }
+    dispatch(patchUserInfo(formData));
+    onCloseModal();
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)} className={css.form}>
-        <fieldset
-          className={css.fieldset}
-          {...register('gender')}
-          onChange={e => {
-            setGender(e.target.value);
-          }}
-        >
-          <legend
-            className={clsx(css.legend, {
-              [css.legendUk]: i18n.language === 'uk',
-            })}
-          >
-            {t('Your gender')}
-          </legend>
-          <div className={css.radioWrapper}>
-            <label className={css.labelsRadioWrap}>
+    <form className={style.formContainer} onSubmit={handleSubmit(onSubmit)}>
+      <div className={style.avatarContainer}>
+        <div className={style.imgContainer}>
+          <img className={style.userImg} src={avatarUrl} alt="avatar"></img>
+        </div>
+        <label className={style.imgLabel} htmlFor={idPhoto}>
+          <Icon id="upload" width="18" height="18" /> Upload a photo
+        </label>
+        <input
+          className={style.imgInput}
+          id={idPhoto}
+          type="file"
+          {...register('photo')}
+          onChange={handlePhotoChange}
+        />
+        {errors.photo && (
+          <p className={style.errorText}>{errors.photo.message}</p>
+        )}
+      </div>
+
+      <PerfectScrollbar className={style.scrollContainer}>
+        <div className={style.userGenderContainer}>
+          <h3 className={style.labelTitle}>Your gender identity</h3>
+          <div className={style.radioContainer}>
+            <div className={style.inputRadioContainer}>
               <input
-                className={css.radioInput}
-                {...register('gender')}
+                className={style.inputRadio}
+                id={idGenderWoman}
                 type="radio"
-                name="gender"
+                {...register('gender')}
                 value="woman"
               />
-              <span className={css.fakeRadio}></span>
-              <span
-                className={clsx(css.label, {
-                  [css.labelUk]: i18n.language === 'uk',
-                })}
-              >
-                {t('Woman gender')}
-              </span>
-            </label>
-            <label className={css.labelsRadioWrap}>
+              <label className={style.labelRadio} htmlFor={idGenderWoman}>
+                Woman
+              </label>
+            </div>
+            <div className={style.inputRadioContainer}>
               <input
-                autoComplete="off"
-                className={css.radioInput}
-                {...register('gender')}
+                className={style.inputRadio}
+                id={idGenderMan}
                 type="radio"
-                name="gender"
+                {...register('gender')}
                 value="man"
               />
-              <span className={css.fakeRadio}></span>
-              <span
-                className={clsx(css.label, {
-                  [css.labelUk]: i18n.language === 'uk',
-                })}
-              >
-                {t('Man gender')}
-              </span>
-            </label>
+              <label className={style.labelRadio} htmlFor={idGenderMan}>
+                Man
+              </label>
+            </div>
           </div>
-        </fieldset>
-        <div className={css.columnsWrapper}>
-          <div className={css.leftPart}>
-            <div className={css.labelContainer}>
-              <label
-                className={clsx(css.label, css.bold, {
-                  [css.labelUk]: i18n.language === 'uk',
-                })}
-                {...register('name')}
-              >
-                {t('Your name')}
-              </label>
-              <input
-                autoComplete="off"
-                type="text"
-                className={clsx(css.input, errors.name && css.errorInput)}
-                {...register('name')}
-              />
-              {errors.name && (
-                <p className={css.errorText}>{errors.name?.message}</p>
-              )}
+          {errors.gender && (
+            <p className={style.errorText}>{errors.gender.message}</p>
+          )}
+        </div>
+
+        <div className={style.settingContainer}>
+          <div className={style.userSettingContainer}>
+            <div className={style.userMainInfoContainer}>
+              <div className={style.inputContainer}>
+                <label className={style.labelTitle} htmlFor={idName}>
+                  Your name
+                </label>
+                <input
+                  className={style.inputElem}
+                  type="text"
+                  id={idName}
+                  {...register('name')}
+                />
+                {errors.name && (
+                  <p className={style.errorText}>{errors.name.message}</p>
+                )}
+              </div>
+
+              <div className={style.inputContainer}>
+                <label className={style.labelTitle} htmlFor={idEmail}>
+                  Email
+                </label>
+                <input
+                  className={style.inputElem}
+                  id={idEmail}
+                  type="email"
+                  {...register('email')}
+                />
+                {errors.email && (
+                  <p className={style.errorText}>{errors.email.message}</p>
+                )}
+              </div>
             </div>
-            <div className={css.labelContainer}>
-              <label
-                className={clsx(css.label, css.bold, {
-                  [css.labelUk]: i18n.language === 'uk',
-                })}
-                {...register('email')}
-              >
-                {t('Your email')}
-              </label>
-              <input
-                autoComplete="off"
-                className={clsx(css.input, errors.email && css.errorInput)}
-                {...register('email')}
-                type="email"
-              />
-              {errors.email && (
-                <p className={css.errorText}>{errors.email.message}</p>
-              )}
+
+            <div className={style.dailyNormaContainer}>
+              <h3 className={style.labelTitle}>My daily norma</h3>
+              <div className={style.dailyNormaFormulaContainer}>
+                <div>
+                  <p className={style.dailyNormaGender}>For woman:</p>
+                  <p className={style.dailyNormaFormula}>
+                    V=(M*0,03) + (T*0,4)
+                  </p>
+                </div>
+                <div>
+                  <p className={style.dailyNormaGender}>For man:</p>
+                  <p className={style.dailyNormaFormula}>
+                    V=(M*0,04) + (T*0,6)
+                  </p>
+                </div>
+              </div>
+              <div className={style.dailyNormaDescriptionContainer}>
+                <p className={style.dailyNormaDescription}>
+                  <span className={style.dailyNormaDescriptionSpan}>*</span> V
+                  is the volume of the water norm in liters per day, M is your
+                  body weight, T is the time of active sports, or another type
+                  of activity commensurate in terms of loads (in the absence of
+                  these, you must set 0)
+                </p>
+              </div>
+              <p className={style.formaText}>
+                <span className={style.dailyNormaWarningSpan}>!</span> Active
+                time in hours
+              </p>
             </div>
-            <FormulaDescription />
           </div>
-          <div className={css.rightPart}>
-            <div className={css.labelContainer}>
-              <label
-                className={clsx(css.label, {
-                  [css.labelUk]: i18n.language === 'uk',
-                })}
-                {...register('weight')}
-              >
-                {t('Your weight')}
-              </label>
-              <input
-                autoComplete="off"
-                type="text"
-                className={clsx(css.input, errors.weight && css.errorInput)}
-                {...register('weight')}
-                onKeyDown={event =>
-                  isNumberAndDot(event, setError, clearErrors)
-                }
-                onChange={e => {
-                  maxNumber(e, setError, setValue, clearErrors);
-                  setWeight(e.target.value);
-                }}
-                maxLength="3"
-                max="500"
-              />
-              {errors.weight && (
-                <p className={css.errorText}>{errors.weight.message}</p>
-              )}
+
+          <div className={style.userSettingContainer}>
+            <div className={style.userMainInfoContainer}>
+              <div className={style.inputContainer}>
+                <label className={style.formaText} htmlFor={idWeight}>
+                  Your weight in kilograms:
+                </label>
+                <input
+                  className={style.inputElem}
+                  id={idWeight}
+                  type="number"
+                  {...register('weight')}
+                />
+                {errors.weight && (
+                  <p className={style.errorText}>{errors.weight.message}</p>
+                )}
+              </div>
+
+              <div className={style.inputContainer}>
+                <label className={style.formaText} htmlFor={idSportHours}>
+                  The time of active participation in sports:
+                </label>
+                <input
+                  className={style.inputElem}
+                  id={idSportHours}
+                  type="number"
+                  {...register('sportHours')}
+                />
+                {errors.sportHours && (
+                  <p className={style.errorText}>{errors.sportHours.message}</p>
+                )}
+              </div>
             </div>
-            <div className={css.labelContainer}>
-              <label
-                className={clsx(css.label, {
-                  [css.labelUk]: i18n.language === 'uk',
-                })}
-                {...register('activeTime')}
-              >
-                {t('Time active')}
-              </label>
-              <input
-                autoComplete="off"
-                type="text"
-                className={clsx(css.input, errors.activeTime && css.errorInput)}
-                {...register('activeTime')}
-                onKeyDown={event =>
-                  isNumberAndDot(event, setError, clearErrors)
-                }
-                onChange={e => {
-                  maxNumber(e, setError, setValue, clearErrors);
-                  setActivity(e.target.value);
-                }}
-                maxLength="3"
-                max="24"
-              />
-              {errors.activeTime && (
-                <p className={css.errorText}>{errors.activeTime.message}</p>
-              )}
-            </div>
-            <p
-              className={clsx(css.waterAmount, {
-                [css.waterAmountUk]: i18n.language === 'uk',
-              })}
-            >
-              {t('Required amount')}{' '}
-              <span
-                className={clsx(css.accent, {
-                  [css.accentUk]: i18n.language === 'uk',
-                })}
-              >
-                {waterVolume.toFixed(1)} {t('Count water')}
-              </span>
-            </p>
-            <div className={css.labelContainer}>
-              <label
-                className={clsx(css.label, css.bold, {
-                  [css.labelUk]: i18n.language === 'uk',
-                })}
-              >
-                {t('Write down')}
-              </label>
-              <input
-                autoComplete="off"
-                type="text"
-                className={clsx(css.input, errors.liters && css.errorInput)}
-                {...register('liters')}
-                onKeyDown={event =>
-                  isNumberAndDot(event, setError, clearErrors)
-                }
-                onChange={e => {
-                  maxNumber(e, setError, setValue, clearErrors);
-                  setLiters(e.target.value);
-                }}
-                maxLength="3"
-                max="10"
-              />
-              {errors.liters && (
-                <p className={css.errorText}>{errors.liters.message}</p>
-              )}
+
+            <div className={style.userMainInfoContainer}>
+              <div className={style.inputContainer}>
+                <p className={style.formaText}>
+                  The required amount of water in liters per day:
+                </p>
+                <p className={style.dailyNormaFormula}>{waterDailyNorma} L</p>
+              </div>
+
+              <div className={style.inputContainer}>
+                <label className={style.labelTitle} htmlFor={idWaterAmount}>
+                  Write down how much water you will drink:
+                </label>
+                <input
+                  className={style.inputElem}
+                  type="number"
+                  step="0.1"
+                  id={idWaterAmount}
+                  {...register('waterAmount')}
+                />
+                {errors.waterAmount && (
+                  <p className={style.errorText}>
+                    {errors.waterAmount.message}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
-        <details className={clsx(css.details, css.appDetails)}>
-          <summary
-            className={clsx(css.summary, {
-              [css.summaryUk]: i18n.language === 'uk',
-            })}
-          >
-            {t('App settings')}{' '}
-            <IoIosArrowDown className={clsx(css.icon, css.appIcon)} />
-          </summary>
-          <AppSettingsForm />
-        </details>
-        <button
-          type="submit"
-          className={clsx(css.saveBtn, {
-            [css.saveBtnUk]: i18n.language === 'uk',
-          })}
-        >
-          {t('Save setting')}
-        </button>
-      </form>
-    </>
+      </PerfectScrollbar>
+
+      <button className={style.formButton} type="submit">
+        Save
+      </button>
+    </form>
   );
-}
+};
+
+export default UserSettingsForm;

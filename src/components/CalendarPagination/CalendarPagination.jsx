@@ -1,63 +1,110 @@
-import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+// import { useEffect, useState } from 'react';
 import css from './CalendarPagination.module.css';
-import Icon from '../../shared/components/Icon/Icon';
+import Icon from '../Icon/Icon';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getDaily } from '../../redux/water/operations';
+import { selectChosenDate } from '../../redux/water/selectors';
+import { setChosenDate } from '../../redux/water/slice';
 
-import { useTranslation } from 'react-i18next';
-import '../../translate/index.js';
-import clsx from 'clsx';
+export const CalendarPagination = () => {
+  const dispatch = useDispatch();
+  const chosenDate = useSelector(selectChosenDate);
 
-export default function CalendarPagination({
-  isOpen,
-  setIsOpen,
-  handleNextMonth,
-  handlePrevMonth,
-  date,
-}) {
-  const { t, i18n } = useTranslation();
-  const isPrevMonthDisabled =
-    new Date(date).getTime() < new Date('2023-02-01T00:00:00.000Z').getTime();
-  const monthNames = [
-    t('Month january'),
-    t('Month february'),
-    t('Month march'),
-    t('Month april'),
-    t('Month may'),
-    t('Month june'),
-    t('Month july'),
-    t('Month august'),
-    t('Month september'),
-    t('Month october'),
-    t('Month november'),
-    t('Month december'),
-  ];
+  useEffect(() => {
+    const [chosenFullDate] = chosenDate.split('T');
+    const [chosenYear, chosenMonth, chosenDay] = chosenFullDate.split('-');
+
+    const date = `${chosenYear}-${chosenMonth}-${chosenDay}`;
+    dispatch(getDaily(date));
+  });
+  //chosenDate приходить у форматі '2024-07-20T20:10:02.082Z';
+  //перетворюємо в об"єкт Date
+  const convertedChosendate = new Date(chosenDate);
+
+  const handlePrevMonth = () => {
+    dispatch(
+      setChosenDate(
+        new Date(
+          convertedChosendate.setMonth(convertedChosendate.getMonth() - 1)
+        ).toISOString()
+      )
+    );
+  };
+
+  const handleNextMonth = () => {
+    dispatch(
+      setChosenDate(
+        new Date(
+          convertedChosendate.setMonth(convertedChosendate.getMonth() + 1)
+        ).toISOString()
+      )
+    );
+  };
+
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+
+  const isLastMonth =
+    currentMonth === convertedChosendate.getMonth() &&
+    currentYear === convertedChosendate.getFullYear();
+
+  const getMonthName = month => {
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    return monthNames[month];
+  };
 
   return (
-    <div className={css.paginationContainer}>
-      <div className={css.buttonsContainer}>
-        <button
-          className={css.button}
-          disabled={isPrevMonthDisabled}
-          onClick={handlePrevMonth}
-        >
-          <FaAngleLeft />
-        </button>
-        <p
-          className={clsx(css.title, { [css.titleUk]: i18n.language === 'uk' })}
-        >
-          {monthNames[date.getMonth()]}, {date.getFullYear()}
-        </p>
-        <button className={css.button} onClick={handleNextMonth}>
-          <FaAngleRight />
-        </button>
-      </div>
-      <button className={css.button} type="button" onClick={setIsOpen}>
+    <div className={css.dateWrapper}>
+      <button onClick={handlePrevMonth} type="button" className={css.buttonLt}>
         <Icon
-          className={clsx(css.icon, !isOpen && css.iconIsNotActive)}
-          id="pieChart"
-          height={20}
-          width={20}
+          id="arrow"
+          width={18}
+          height={18}
+          className={css.iconLt}
+          fillColor="#323f47"
         />
       </button>
+
+      <h3 className={css.dateTitle}>
+        {getMonthName(convertedChosendate.getMonth())},{' '}
+        {convertedChosendate.getFullYear()}
+      </h3>
+      <button
+        onClick={handleNextMonth}
+        type="button"
+        className={css.buttonGt}
+        disabled={isLastMonth}
+      >
+        <Icon
+          id="arrow"
+          width={18}
+          height={18}
+          className={css.iconGt}
+          fillColor="#323f47"
+        />
+      </button>
+
+      <Icon
+        id="pie-chart"
+        width={20}
+        height={20}
+        className={css.iconPieChart}
+        fillColor="#323f47"
+      />
     </div>
   );
-}
+};

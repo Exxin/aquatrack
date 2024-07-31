@@ -1,230 +1,185 @@
-.container {
-  box-sizing: border-box;
-  position: relative;
-  width: 100%;
-  max-width: 344px;
-  height: 353px;
-  display: flex;
-  justify-content: center;
-  border-radius: 30px;
-  align-items: center;
-  color: var(--main-white);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  background-image: url('/boardBg/Mobile/1x/Rectangle\ 19-min.jpg');
+.section {
+  background-image: url(../../img/welcomePageImg/mainImg-phone-2x.jpg);
   background-size: cover;
+  background-repeat: no-repeat;
   background-position: center;
-}
-
-.wrapper {
-  box-sizing: border-box;
-  padding: 32px 16px;
-  width: 100%;
-}
-
-.customersWrapper {
-  box-sizing: border-box;
-  width: fit-content;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 14px;
-  margin-bottom: 8px;
-  margin-left: 0;
-  margin-right: auto;
-  padding: 10px 14px;
-  color: var(--main);
-  background-color: var(--main-white);
+  height: 353px;
   border-radius: 30px;
+  position: relative;
+}
+
+.customersBox {
   display: flex;
-  flex-direction: row;
+  align-items: center;
+  padding: 10px 14px;
   gap: 4px;
+  border-radius: 30px;
+  background: var(--main-white);
+  box-shadow: 0px 4px 50px 0px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 96px;
+  left: 16px;
 }
 
-.usersList {
-  padding: 0;
-  margin: 0;
+.customersContainer {
+  position: relative;
   display: flex;
-  flex-direction: row;
+  align-items: center;
 }
 
-.usersItem {
-  z-index: 2;
-  border: 2px solid var(--main-white);
-  background-color: var(--main-white);
-  border-radius: 50%;
-  overflow: hidden;
-  margin-left: -10px;
-  width: 28px;
-  height: 28px;
-}
-
-.usersItem:first-child {
+.firstContainer {
   z-index: 3;
 }
 
-.usersItem:last-child {
+.secondContainer {
+  margin-left: -8px;
+  z-index: 2;
+}
+
+.thirdContainer {
   z-index: 1;
-}
-.avatar {
-  width: 100%;
-  height: 100%;
+  margin-left: -8px;
 }
 
-.usersList > .usersItem:first-child {
-  margin-left: 0;
-}
-.usersText {
-  display: block;
-
-  text-align: start;
+.pictureImage {
+  border-radius: 50%;
+  width: 26px;
+  height: 28px;
 }
 
-.usersTextUk {
-  font-family: var(--font-family);
-  display: block;
-  text-align: start;
+.sectionsTextLeters {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 117%;
+  color: var(--main);
 }
 
-.textAccent {
+.span {
   color: var(--accent);
 }
 
-.textAccent {
-  font-family: var(--font-family);
-  color: var(--accent);
+.group {
+  position: absolute;
+  bottom: 32px;
+  right: 16px;
 }
 
-.features {
+.groupList {
+  max-width: 168px;
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
   flex-wrap: wrap;
   gap: 4px;
-  width: 168px;
-  margin-right: 0;
-  margin-left: auto;
 }
 
-.feature {
-  display: block;
-  font-size: 8px;
-  font-weight: 700;
-  line-height: 8px;
-  letter-spacing: -0.01em;
+.groupListItem {
   padding: 9px 12px;
-  color: var(--main);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 30px;
 }
 
-.featureUk {
-  font-family: var(--font-family);
-  display: block;
-  font-size: 8px;
-  font-weight: 700;
-  line-height: 8px;
-  letter-spacing: -0.01em;
-  padding: 9px 12px;
-  color: var(--main);
-  border-radius: 30px;
+.groupListItem:nth-child(1) {
+  background: var(--main);
+  gap: 4px;
 }
 
-.view {
-  background-color: var(--accent);
+.groupListItem:nth-child(2) {
+  background: var(--accent);
 }
 
-.habit {
-  position: relative;
-  padding-left: 24px;
-  background-color: var(--main);
-  color: var(--main-white);
+.groupListItem:nth-child(3) {
+  background: var(--main-white);
 }
 
-.habit::before {
-  position: absolute;
-  content: '';
-  background-color: var(--accent);
+.ellipse {
+  border-radius: 50%;
   width: 8px;
   height: 8px;
-  border-radius: 50%;
-  left: 12px;
-  top: 9px;
+  background-color: var(--accent);
 }
 
-.personal {
-  background-color: var(--main-white);
+.groupListItemText {
+  color: var(--main-white);
+  font-weight: 700;
+  font-size: 8px;
+  line-height: 100%;
+  letter-spacing: -0.01em;
 }
 
-@media (min-width: 375px) and (max-width: 767px) {
-  .container {
-    background-image: url('/boardBg/Tablet/1x/girlWithWater-min.jpg');
-  }
+.groupListItemTextBlack {
+  color: var(--main);
+  font-weight: 700;
+  font-size: 8px;
+  line-height: 100%;
+  letter-spacing: -0.01em;
 }
 
 @media (min-width: 768px) {
-  .container {
-    background-image: url('/boardBg/Desctop/1x/girlWithBotle.jpg');
-    max-width: 704px;
+  .section {
+    background-image: url(../../img/welcomePageImg/mainImg-tab-2x.jpg);
     height: 446px;
   }
 
-  .wrapper {
-    padding: 32px;
+  .customersBox {
+    padding: 10px 20px;
+    gap: 4px;
+    border-radius: 30px;
+    left: 32px;
   }
 
-  .customersWrapper {
-    margin-bottom: -18px;
-    font-size: 15px;
-    line-height: 22.4px;
-    padding: 10px 20px;
+  .secondContainer {
+    margin-left: -18px;
   }
-  .usersItem {
+
+  .thirdContainer {
+    margin-left: -18px;
+  }
+
+  .pictureImage {
     width: 47px;
     height: 47px;
-    margin-left: -20px;
   }
 
-  .features {
+  .sectionsTextLeters {
+    font-size: 15px;
+    line-height: 149%;
+  }
+
+  .group {
+    right: 32px;
+  }
+
+  .groupList {
     gap: 10px;
-    width: 244px;
+    max-width: 242px;
   }
 
-  .feature {
-    padding: 11px 16px;
+  .groupListItemText {
     font-size: 12px;
-    line-height: 12px;
+    line-height: 100%;
+    letter-spacing: -0.01em;
   }
-  .habit {
-    padding-left: 28px;
-  }
-  .habit::before {
-    left: 16px;
-    top: 13px;
+
+  .groupListItemTextBlack {
+    font-size: 12px;
+    line-height: 100%;
+    letter-spacing: -0.01em;
   }
 }
 
 @media (min-width: 1440px) {
-  .container {
-    width: 672px;
+  .section {
+    background-image: url(../../img/welcomePageImg/mainImg-tab-2x.jpg);
     height: 736px;
+    width: 672px;
   }
-  .wrapper {
-    padding: 64px 32px;
-  }
-}
 
-@media (min-resolution: 192dpi) {
-  .container {
-    background-image: url('/boardBg/Mobile/2x/Rectangle\ 19@2x-min.jpg');
+  .customersBox {
+    bottom: 132px;
   }
-}
-@media (min-resolution: 192dpi) and (min-width: 768px) {
-  .container {
-    background-image: url('/boardBg/Tablet/2x/girlWithWater\(2x\)-min.jpg');
-  }
-}
-@media (min-resolution: 192dpi) and (min-width: 1440px) {
-  .container {
-    background-image: url('/boardBg/Desctop/2x/girlWithBotle2x.jpg');
+
+  .group {
+    bottom: 64px;
   }
 }

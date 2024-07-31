@@ -1,136 +1,68 @@
+import css from './WaterItem.module.css';
+
+import { format } from 'date-fns';
 import { useState } from 'react';
-import css from '../WaterItem/WaterItem.module.css';
-import WaterModal from '../../shared/components/WaterModal/WaterModal';
-import Modal from '../../shared/components/Modal/Modal';
-import DeleteWaterModal from '../../components/DeleteWaterModal/DeleteWaterModal';
-import Icon from '../../shared/components/Icon/Icon';
-import { useSelector } from 'react-redux';
-import { selectDayWater } from '../../redux/water/selectors';
-import { unixParser } from '../../helpers/validationsHelper.js';
-import { useTranslation } from 'react-i18next';
-import '../../translate/index.js';
-import clsx from 'clsx';
+import DeleteWaterModal from '../DeleteWaterModal/DeleteWaterModal';
+import WaterModal from '../WaterModal/WaterModal';
+import Icon from '../Icon/Icon';
 
-export default function WaterItem() {
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+const WaterItem = ({ water }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedWaterId, setSelectedWaterId] = useState(null);
-  const [selectedWaterAmount, setSelectedWaterAmount] = useState(null);
-  const [selectedWaterTime, setSelectedWaterTime] = useState(null);
-  const { t, i18n } = useTranslation();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const dataWaterOfDay = useSelector(selectDayWater);
+  const handleEdit = () => {
+    setIsEditModalOpen(true);
+  };
 
-  const handleOpenDeleteModal = id => {
-    setSelectedWaterId(id);
+  const handleDelete = () => {
     setIsDeleteModalOpen(true);
   };
 
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+  };
+
   const handleCloseDeleteModal = () => {
-    setSelectedWaterId(null);
     setIsDeleteModalOpen(false);
   };
 
-  const handleEdit = (id, amount, date) => {
-    setIsEditModalOpen(true);
-    setSelectedWaterId(id);
-    setSelectedWaterAmount(amount);
-    setSelectedWaterTime(date);
-  };
-
   return (
-    <>
-      {dataWaterOfDay.length > 0 ? (
-        <ul className={css.list_water_items}>
-          {dataWaterOfDay.map(water => (
-            <li key={water._id} className={css.water_item}>
-              <div className={css.water_item_content}>
-                <Icon
-                  className={css.icon_glass_water}
-                  width={44}
-                  height={45}
-                  id="icon-water-glass"
-                />
-                <div>
-                  <strong>
-                    {water.amount} {t('Water add')}
-                  </strong>
-                  <p className={css.date}>{unixParser(water.date)}</p>
-                </div>
-                <div className={css.container_buttons}>
-                  <button
-                    className={css.editButton}
-                    onClick={() =>
-                      handleEdit(water._id, water.amount, water.date)
-                    }
-                  >
-                    {' '}
-                    <Icon
-                      className={css.svg_edit}
-                      width={16}
-                      height={16}
-                      id="icon-edit"
-                    />{' '}
-                  </button>
-                  <button
-                    className={css.deleteButton}
-                    onClick={() => handleOpenDeleteModal(water._id)}
-                  >
-                    {' '}
-                    <Icon
-                      className={css.svg_delete}
-                      width={16}
-                      height={16}
-                      id="trash"
-                    />{' '}
-                  </button>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div className={css.container_without_water}>
-          <Icon
-            className={css.icon_glass_water}
-            width={44}
-            height={45}
-            id="icon-water-glass"
-          />
-          <p
-            className={clsx(css.text_, {
-              [css.text_Uk]: i18n.language === 'uk',
-            })}
-          >
-            {t('Not found')}
-          </p>
-        </div>
-      )}
+    <div className={css.item}>
+      <Icon id="water-glass" className={css.iconGlass} />
+      <div className={css.water}>
+        <p className={css.volume}>{`${water.amount}ml`}</p>
+        <p className={css.time}>{`${format(
+          new Date(water?.time.slice(0, -1)),
+          'HH:mm'
+        )}`}</p>
+      </div>
+      <div className={css.edit}>
+        <button type="button" onClick={handleEdit} className={css.btnEdit}>
+          <Icon id="edit" width="16" height="16" />
+        </button>
+        <button type="button" onClick={handleDelete} className={css.btnTrash}>
+          <Icon id="trash" width="16" height="16" />
+        </button>
+      </div>
 
-      {isEditModalOpen && (
-        <Modal
-          isOpen={isEditModalOpen}
-          onClose={() => {
-            setIsEditModalOpen(false);
-          }}
-        >
-          <WaterModal
-            operationType="edit"
-            isOpen={setIsEditModalOpen}
-            waterId={selectedWaterId}
-            waterAmount={selectedWaterAmount}
-            waterTime={selectedWaterTime}
-          />
-        </Modal>
-      )}
-      {isDeleteModalOpen && (
-        <Modal isOpen={isDeleteModalOpen} onClose={handleCloseDeleteModal}>
-          <DeleteWaterModal
-            onClose={handleCloseDeleteModal}
-            waterId={selectedWaterId}
-          />
-        </Modal>
-      )}
-    </>
+      <DeleteWaterModal
+        isOpen={isDeleteModalOpen}
+        closeModal={handleCloseDeleteModal}
+        id={water._id}
+      />
+
+      <WaterModal
+        id={water._id}
+        isOpen={isEditModalOpen}
+        closeModal={handleCloseEditModal}
+        type="edit"
+        initialData={{
+          amount: water.amount,
+          time: format(new Date(water?.time.slice(0, -1)), 'HH:mm'),
+        }}
+      />
+    </div>
   );
-}
+};
+
+export default WaterItem;

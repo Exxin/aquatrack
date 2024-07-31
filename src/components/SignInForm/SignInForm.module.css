@@ -1,151 +1,221 @@
-.form {
+.signInContainer {
+  border-radius: 30px;
+  background-color: var(--background);
   display: flex;
   flex-direction: column;
-  width: 310px;
-}
-.inputGroup {
-  display: flex;
-  flex-direction: column;
+  padding: 216px 16px;
   position: relative;
-  width: 100%;
-}
-.inputGroup:first-child {
-  padding-bottom: 16px;
 }
 
-.inputGroup > label {
-  color: var(--main-text);
-  font-family: Poppins;
-  font-size: 14px;
+.logo {
   font-weight: 700;
-  line-height: 18px;
-  letter-spacing: -1%;
-  margin-bottom: 8px;
+  font-size: 18px;
+  line-height: 111%;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--main);
 }
 
-.inputGroupUk > label {
-  font-family: var(--font-family);
-  color: var(--main-text);
-  font-size: 14px;
+.title {
   font-weight: 700;
-  line-height: 18px;
-  letter-spacing: -1%;
-  margin-bottom: 8px;
+  font-size: 32px;
+  line-height: 100%;
+  letter-spacing: -0.01em;
+  color: var(--main);
+  margin-bottom: 32px;
+  cursor: default;
 }
 
-.inputGroupInput {
-  box-sizing: border-box;
-  width: 100%;
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.inputItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.label {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 129%;
+  letter-spacing: -0.01em;
+}
+
+.field {
+  border: 1px solid rgba(47, 47, 47, 0.2);
   border-radius: 15px;
-  border: 1px solid var(--main-border);
-  background-color: transparent;
   padding: 16px;
-  outline: none;
-  height: 50px;
-}
-
-.inputGroupInput::placeholder {
-  color: var(--main-placeholder);
-  font-family: Poppins;
+  font-weight: 400;
   font-size: 14px;
-  line-height: 18px;
-  letter-spacing: -1%;
+  line-height: 129%;
+  letter-spacing: -0.01em;
+  background-color: inherit;
 }
 
-.inputGroupInputUk::placeholder {
-  font-family: var(--font-family);
-  color: var(--main-placeholder);
+.field::placeholder {
+  font-weight: 400;
   font-size: 14px;
-  line-height: 18px;
-  letter-spacing: -1%;
+  line-height: 129%;
+  letter-spacing: -0.01em;
+  color: rgba(47, 47, 47, 0.6);
 }
 
-.inputError {
-  border: 1px solid var(--validation-error);
-  color: var(--validation-error);
-}
-.error {
-  color: var(--validation-error);
-  font-size: 14px;
-  line-height: 18px;
-  letter-spacing: -1%;
-  margin-top: 10px;
-}
-
-.passwordContainer {
-  position: relative;
-}
-.passwordToggle {
+.toggleVisibility {
   position: absolute;
-  border: none;
-  line-height: 0;
-  right: 16px;
-  top: 4px;
-  padding: 10px;
-  background-color: transparent;
-  /* display: none; */
-}
-.icon {
-  fill: transparent;
+  right: 18px;
+  top: 42px;
 }
 
-.submitButton {
-  background: var(--accent);
+.button {
   border-radius: 30px;
+  padding: 16px 131px;
+  background-color: var(--accent);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 129%;
+  letter-spacing: -0.01em;
+  color: var(--main);
+  margin-bottom: 16px;
   border: none;
-  margin-top: 32px;
-  font-weight: bold;
-  padding: 16px;
-  transition: all var(--transition);
+  cursor: pointer;
 }
 
-.submitButtonUk {
-  font-family: var(--font-family);
-  background: var(--accent);
-  border-radius: 30px;
-  border: none;
-  margin-top: 32px;
-  font-weight: bold;
-  padding: 16px;
-  transition: all var(--transition);
+.button:hover,
+.button:focus {
+  background-color: #87d28d;
+  cursor: pointer;
 }
 
-.submitButton:hover,
-.submitButton:focus {
-  background-color: var(--accent-hover);
+.redirect {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 129%;
+  letter-spacing: -0.01em;
+  color: rgba(47, 47, 47, 0.5);
+  text-align: center;
 }
 
-.submitButton:disabled {
-  background-color: transparent;
-  border: 1px solid var(--main-border);
-  color: var(--main-border);
+.redirectLink {
+  font-size: 14px;
+  line-height: 129%;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-skip-ink: none;
+  color: var(--main-text);
+}
+
+.redirectLink:active,
+.redirectLink:hover,
+.redirectLink:focus {
+  color: rgba(50, 63, 71, 0.4);
+}
+
+.errorField {
+  border: 1px solid #ef5050;
+  color: #ef5050;
+}
+
+.errorField::placeholder {
+  color: #ef5050;
+}
+
+.text {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.28571;
+  letter-spacing: -0.01em;
+  color: #ef5050;
+}
+
+@media screen and (max-width: 374px) {
+  .button {
+    padding: 16px 100px;
+  }
 }
 
 @media screen and (min-width: 768px) {
-  .form {
+  .signInContainer {
+    padding: 281px 134px;
+  }
+
+  .formContainer {
     width: 436px;
-  }
-  .inputGroup:first-child {
-    padding-bottom: 20px;
-  }
-  .inputGroup > label {
-    font-size: 16px;
+    margin: 0 auto;
   }
 
-  .inputGroupInput::placeholder {
-    font-size: 16px;
-  }
-  .inputGroupInput {
-    height: 56px;
+  .logo {
+    font-size: 24px;
+    line-height: 100%;
   }
 
-  .passwordToggle {
-    display: block;
-    top: 16px;
+  .title {
+    font-size: 36px;
+    line-height: 106%;
+  }
+
+  .inputContainer {
+    gap: 20px;
+  }
+
+  .label {
+    font-size: 16px;
+    line-height: 150%;
+  }
+
+  .field {
+    font-size: 16px;
+    line-height: 150%;
+  }
+
+  .field::placeholder {
+    font-size: 16px;
+    line-height: 150%;
+  }
+
+  .toggleVisibility {
+    right: 18px;
+    top: 52px;
+  }
+
+  .button {
+    padding: 18px 191px;
+    font-size: 16px;
+    line-height: 150%;
+  }
+
+  .redirect {
+    font-size: 16px;
+    line-height: 150%;
+  }
+
+  .redirectLink {
+    font-size: 16px;
+    line-height: 150%;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .signInContainer {
     padding: 0;
+    justify-content: center;
+    height: 736px;
+    width: 672px;
   }
 
-  .submitButton {
-    padding: 18px;
+  .logo {
+    font-size: 24px;
+    line-height: 100%;
+  }
+
+  .title {
+    font-size: 36px;
+    line-height: 106%;
   }
 }

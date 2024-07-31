@@ -1,62 +1,53 @@
-.WaterMainInfoContainer {
-  height: 415px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  background-color: var(--accent);
+.waterMainContainer {
+  background-color: #9be1a0;
+  max-width: 343px;
+  padding: 122px 16px 30px;
+  position: relative;
   border-radius: 30px;
-  padding: 24px 16px 32px 16px;
-  background-image: url('/boardBg/Mobile/1x/transparent_bottle_for_water\ 1-min.png');
+
+  background-image: url(../../img/waterMainImg/bottle-font-phone.png);
   background-repeat: no-repeat;
-  background-position: bottom 30px center;
+  background-position: center 50px;
   background-size: 262px 335px;
 }
 
-.logoWraper {
-  width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 78px;
-}
-
 @media screen and (min-width: 768px) {
-  .WaterMainInfoContainer {
+  .waterMainContainer {
+    max-width: unset;
+    width: 704px;
     height: 578px;
-    padding: 32px 32px 64px 32px;
-    background-image: url('/boardBg/Tablet/1x/transparent_bottle_for_water\ 1-min.png');
+    padding: 157px 32px 64px;
+    background-image: url(../../img/waterMainImg/bottle-font-tab.png);
+    background-position: center 69px;
     background-size: 374px 477px;
-    background-position: bottom 32px center;
-  }
-  .logoWraper {
-    margin-bottom: 101px;
   }
 }
 
 @media screen and (min-width: 1440px) {
-  .WaterMainInfoContainer {
-    height: auto;
+  .waterMainContainer {
     width: 672px;
-    background-image: url('/boardBg/Desctop/1x/transparent_bottle_for_water\ 1-1-min.png');
+    height: 736px;
+    padding: 157px 32px 64px;
+    background-image: url(../../img/waterMainImg/bottle-font-desktop.png);
+    background-position: center 92px;
     background-size: 472px 604px;
-    background-position: bottom 40px center;
   }
 }
 
-@media (min-resolution: 192dpi) and (min-width: 375px) {
-  .WaterMainInfoContainer {
-    background-image: url('/boardBg/Mobile/2x/transparent_bottle_for_water\ 1@2x-min.png');
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .waterMainContainer {
+    background-image: url(../../img/waterMainImg/bottle-font-phone@2x.png);
   }
-}
-@media (min-resolution: 192dpi) and (min-width: 768px) {
-  .WaterMainInfoContainer {
-    background-image: url('/boardBg/Tablet/2x/transparent_bottle_for_water\ 1@2x-min.png');
+
+  @media screen and (min-width: 768px) {
+    .waterMainContainer {
+      background-image: url(../../img/waterMainImg/bottle-font-tab@2x.png);
+    }
   }
-}
-@media (min-resolution: 192dpi) and (min-width: 1440px) {
-  .WaterMainInfoContainer {
-    background-image: url('/boardBg/Desctop/2x/transparent_bottle_for_water\ 1-min.png');
+
+  @media screen and (min-width: 1440px) {
+    .waterMainContainer {
+      background-image: url(../../img/waterMainImg/bottle-font-desktop@2x.png);
+    }
   }
 }

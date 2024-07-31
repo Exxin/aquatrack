@@ -1,27 +1,20 @@
-import css from '../DailyInfo/DailyInfo.module.css';
-import ChooseDate from '../../components/ChooseDate/ChooseDate';
-import AddWaterBtn from '../../shared/components/AddWaterBtn/AddWaterBtn';
-import Modal from '../../shared/components/Modal/Modal';
-import WaterModal from '../../shared/components/WaterModal/WaterModal';
-import { useState } from 'react';
-import WaterList from '../../components/WaterList/WaterList';
+import ChooseDate from '../ChooseDate/ChooseDate';
+import WaterList from '../WaterList/WaterList';
+import css from './DailyInfo.module.css';
+import AddWaterDailyBtn from '../AddWaterDailyBtn/AddWaterDailyBtn';
 
-export default function DailyInfo() {
-  const [isOpen, setIsOpen] = useState(false);
-
+const DailyInfo = () => {
   return (
-    <div className={css.container}>
-      <div className={css.container_top_daily_info}>
-        <ChooseDate />
-        <AddWaterBtn WaterDetailedInfoStyles={true} addForActiveDay={true} />
+    <section className={css.section}>
+      <div className={css.container}>
+        <div className={css.title}>
+          <ChooseDate />
+          <AddWaterDailyBtn />
+        </div>
+        <WaterList />
       </div>
-
-      {isOpen && (
-        <Modal>
-          <WaterModal />
-        </Modal>
-      )}
-      <WaterList />
-    </div>
+    </section>
   );
-}
+};
+
+export default DailyInfo;

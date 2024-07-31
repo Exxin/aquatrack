@@ -1,57 +1,77 @@
-import css from '../DeleteWaterModal/DeleteWaterModal.module.css';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import styles from './DeleteWaterModal.module.css';
+import ModalWindow from '../ModalWindow/ModalWindow';
+import {
+  delWater,
+  getDaily,
+  getMonthly,
+  getTodayWater,
+} from '../../redux/water/operations';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteWater } from '../../redux/water/operations';
-import { selectIsLoading } from '../../redux/water/selectors.js';
-import DotLoader from '../../shared/components/DotLoader/DotLoader.jsx';
-import { useTranslation } from 'react-i18next';
-import '../../translate/index.js';
+import { selectChosenDate } from '../../redux/water/selectors';
+import { Notify } from 'notiflix';
 
-import clsx from 'clsx';
-
-export default function DeleteWaterModal({ onClose, waterId }) {
+const DeleteWaterModal = ({ isOpen, closeModal, id }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const chosenDate = useSelector(selectChosenDate);
   const dispatch = useDispatch();
-  const isLoading = useSelector(selectIsLoading);
-  const handleDelete = () => {
+
+  const handleDelete = async () => {
+    setIsProcessing(true);
+
     try {
-      dispatch(deleteWater(waterId))
-        .unwrap()
-        .then(() => onClose());
+      //видаляємо
+      await dispatch(delWater(id));
+      const [chosenFullDate] = chosenDate.split('T');
+      const [chosenYear, chosenMonth, chosenDay] = chosenFullDate.split('-');
+
+      //оновлюємо список випитої за день
+      const fullDate = `${chosenYear}-${chosenMonth}-${chosenDay}`;
+      await dispatch(getDaily(fullDate));
+
+      await dispatch(getTodayWater());
+
+      //оновлюємо випиту воду за місяць
+      const date = `${chosenYear}-${chosenMonth}`;
+      dispatch(getMonthly(date));
     } catch (error) {
-      console.log(error);
+      Notify.failure('Failed to delete record');
+    } finally {
+      setIsProcessing(false);
+      closeModal();
     }
+
+    setIsProcessing(false);
   };
-  const { t, i18n } = useTranslation();
 
   return (
-    <>
-      <div className={css.modalContent}>
-        <button className={css.closeButton} onClick={onClose}></button>
-        <h3
-          className={clsx(css.title, { [css.titleUk]: i18n.language === 'uk' })}
-        >
-          {t('Delete entry')}
-        </h3>
-        <p
-          className={clsx(css.message, {
-            [css.messageUk]: i18n.language === 'uk',
-          })}
-        >
-          {t('Your sure')}
+    <ModalWindow modalIsOpen={isOpen} onCloseModal={closeModal}>
+      <div className={styles.modalContainer}>
+        <h2 className={styles.title}>Delete entry</h2>
+        <p className={styles.question}>
+          Are you sure you want to delete the entry?
         </p>
-        <div className={css.buttons}>
+        <div className={styles.buttonContainer}>
           <button
-            className={clsx(css.deleteButton, {
-              [css.deleteButtonUk]: i18n.language === 'uk',
-            })}
+            type="button"
             onClick={handleDelete}
+            className={`${styles.commonBtn} ${styles.deleteBtn}`}
           >
-            {isLoading ? <DotLoader text="Deleting" /> : t('Delete card')}
+            Delete
           </button>
-          <button className={css.cancelButton} onClick={onClose}>
-            {t('Log exit')}
+          <button
+            type="button"
+            onClick={closeModal}
+            className={`${styles.commonBtn} ${styles.cancelBtn}`}
+            disabled={isProcessing}
+          >
+            Cancel
           </button>
         </div>
       </div>
-    </>
+    </ModalWindow>
   );
-}
+};
+
+export default DeleteWaterModal;
