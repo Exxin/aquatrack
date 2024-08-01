@@ -23,7 +23,7 @@ const waterInitialState = {
   monthly: [],
   daily: [],
   today: [],
-  loading: true,
+  loading: false,
   error: null,
 };
 
@@ -65,9 +65,6 @@ const waterSlice = createSlice({
       .addCase(delWater.fulfilled, (state, action) => {
         state.loading = false;
         state.daily = state.daily.filter(item => {
-          return item._id !== action.payload;
-        });
-        state.today = state.daily.filter(item => {
           return item._id !== action.payload;
         });
       })
