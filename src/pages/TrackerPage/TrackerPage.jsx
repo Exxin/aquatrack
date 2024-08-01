@@ -1,4 +1,4 @@
-import WaterMainInfo from '../../components/waterMainInfo/WaterMainInfo';
+// import WaterMainInfo from '../../components/waterMainInfo/WaterMainInfo';
 import WaterDetailedInfo from '../../components/WaterDetailedInfo/WaterDetailedInfo';
 
 import Container from '../../components/Container/Container';
@@ -13,7 +13,7 @@ const TrackerPage = () => {
     useEffect(() => {
       dispatch(getUserInfo());
     }, [dispatch]);
-  
+
   return (
     <Container>
       <DocTitle>Home</DocTitle>
