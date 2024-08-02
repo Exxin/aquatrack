@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Notify } from 'notiflix/build/notiflix-notify-aio.js';
 
 const apiClient = axios.create({
-  baseURL: 'https://aqua-track-backend.onrender.com',
+  baseURL: 'https://test-aquatrack-backend.onrender.com',
   // baseURL: 'http://localhost:3000',
   withCredentials: true,
 });
@@ -39,11 +39,11 @@ const request = async (
       // Запит був зроблений, але відповіді не отримано
       Notify.failure(
         'Please check your internet connection or try again later'
-      ); 
+      );
       throw new Error('No response received from server');
     } else {
       // Щось трапилось при налаштуванні запиту
-      Notify.failure('Oops something went wrong'); 
+      Notify.failure('Oops something went wrong');
       throw new Error('Error in setting up request: ' + error.message);
     }
   }
