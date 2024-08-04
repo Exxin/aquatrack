@@ -2,18 +2,11 @@ import axios from 'axios';
 import { Notify } from 'notiflix/build/notiflix-notify-aio.js';
 
 const apiClient = axios.create({
-  baseURL: 'https://aqua-track-backend.onrender.com',
-  // baseURL: 'http://localhost:3000',
+  baseURL: 'https://aqua-track-backend.onrender.com/',
   withCredentials: true,
 });
 
-const request = async (
-  method,
-  url,
-  data = null,
-  params = null,
-  headers = {}
-) => {
+const request = async (method, url, data = null, params = null, headers = {}) => {
   try {
     const response = await apiClient({
       method,
@@ -34,28 +27,20 @@ const request = async (
         Notify.failure('Error, try reloading this page');
       }
       throw new Error('Error' + error.message);
-      // throw error.response.data;
     } else if (error.request) {
       // Запит був зроблений, але відповіді не отримано
-      Notify.failure(
-        'Please check your internet connection or try again later'
-      ); 
+      Notify.failure('Please check your internet connection or try again later');
       throw new Error('No response received from server');
     } else {
       // Щось трапилось при налаштуванні запиту
-      Notify.failure('Oops something went wrong'); 
+      Notify.failure('Oops something went wrong');
       throw new Error('Error in setting up request: ' + error.message);
     }
   }
 };
 
-export const axiosGet = (url, params = null, headers = {}) =>
-  request('get', url, null, params, headers);
-export const axiosPost = (url, data, headers = {}) =>
-  request('post', url, data, null, headers);
-export const axiosPut = (url, data, headers = {}) =>
-  request('put', url, data, null, headers);
-export const axiosPatch = (url, data, headers = {}) =>
-  request('patch', url, data, null, headers);
-export const axiosDel = (url, headers = {}) =>
-  request('delete', url, null, null, headers);
+export const axiosGet = (url, params = null, headers = {}) => request('get', url, null, params, headers);
+export const axiosPost = (url, data, headers = {}) => request('post', url, data, null, headers);
+export const axiosPut = (url, data, headers = {}) => request('put', url, data, null, headers);
+export const axiosPatch = (url, data, headers = {}) => request('patch', url, data, null, headers);
+export const axiosDel = (url, headers = {}) => request('delete', url, null, null, headers);
