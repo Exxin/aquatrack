@@ -1,4 +1,4 @@
-import WaterMainInfo from '../../components/WaterMainInfo/WaterMainInfo';
+import WaterMainInfo from '../../components/WaterInfo/WaterMainInfo';
 import WaterDetailedInfo from '../../components/WaterDetailedInfo/WaterDetailedInfo';
 
 import Container from '../../components/Container/Container';
