@@ -12,6 +12,7 @@ import {
   selectWaterLoading,
 } from '../../redux/water/selectors';
 import { selectWaterDailyNorma } from '../../redux/user/selectors';
+import { getISOStringDate } from '../../service/getISOStringDate';
 
 export const getNumOfDaysInMonth = chosenDate => {
   const year = chosenDate.getFullYear();
@@ -22,7 +23,7 @@ export const getNumOfDaysInMonth = chosenDate => {
   return daysInMonth;
 };
 
-const getDailyPercent = ({ day, month, year, response }) => {
+const getDailyAmount = ({ day, month, year, response }) => {
   //приводи місяць до формату "06" замість "6 "
 
   const corMonth = month < 10 ? `0${month}` : month;
@@ -32,11 +33,14 @@ const getDailyPercent = ({ day, month, year, response }) => {
   const dayData = response?.find(entry => {
     return entry.time === dayString;
   });
-
-  return dayData ? parseInt(dayData.daylyProgress, 10) : 0;
+  return dayData ? dayData.amount : 0;
 };
 
-const getDailyWaterPercentageFromBackend = ({ chosenDate, response }) => {
+const getDailyWaterPercentageFromBackend = ({
+  chosenDate,
+  response,
+  dailyNorma,
+}) => {
   //isEnabled вказує чи клікабельна поточна кнопка
   //тобто всі кнопки включно до сьогоднішнього дня активні
   //кнопки з завтрашнього дня неактивні
@@ -65,30 +69,35 @@ const getDailyWaterPercentageFromBackend = ({ chosenDate, response }) => {
 
   // створюємо масив з властивостями date, waterPercentage, isToday
   for (let day = 1; day <= daysInMonth; day++) {
-    // отримуємо дані відсотків з БЕ пошуком в масив по даті
-    const percentage = getDailyPercent({
-      day,
-      month: chosenMonth,
-      year: chosenYear,
-      response,
-    });
+    const percentage = dailyNorma
+      ? Math.round(
+          (100 *
+            getDailyAmount({
+              day,
+              month: chosenMonth,
+              year: chosenYear,
+              response,
+            })) /
+            (1000 * dailyNorma)
+        )
+      : 0;
 
+    //ми обмежуємо максимальне видиме значення до 100%
     const dailyWaterPercentage = percentage > 100 ? 100 : percentage;
-
     //перевіряємо чи обраний день це сьогоднійшній день для подальшої стилізації
     const isToday = isCurrentMonthAndYear && currentDay === day;
 
-    const newDay = new Date(chosenDate.toISOString());
+    const newDay = new Date(getISOStringDate(chosenDate));
     newDay.setDate(day);
 
-    const clickedDay = newDay.toISOString();
+    const clickedDay = getISOStringDate(newDay);
 
     data.push({
       date: day,
       waterPercentage: dailyWaterPercentage,
       isToday,
       isEnabled,
-      chosenDate: chosenDate.toISOString(),
+      chosenDate: getISOStringDate(chosenDate),
       clickedDay,
     });
 
