@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Notify } from 'notiflix/build/notiflix-notify-aio.js';
 
 const apiClient = axios.create({
-  baseURL: 'https://aqua-track-backend.onrender.com/',
+  baseURL: 'https://aqua-track-backend.onrender.com',
   withCredentials: true,
 });
 
