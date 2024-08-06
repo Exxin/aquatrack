@@ -29,9 +29,10 @@ const request = async (
         Notify.failure('User with this email already exists!');
       } else if (error.request.responseURL.includes("login")) {
         Notify.failure('Wrong login or password!');
-      } else {
-        Notify.failure('Error, try reloading this page');
       }
+      // else {
+      //   Notify.failure('Error, try reloading this page');
+      // }
       throw new Error('Error' + error.message);
       // throw error.response.data;
     } else if (error.request) {
