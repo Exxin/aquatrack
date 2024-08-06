@@ -8,19 +8,19 @@ const apiClient = axios.create({
 
 import axios from 'axios';
 
-axios.get('https://aqua-track-backend.onrender.com/users', {
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-    'Origin': 'https://test-aquatrack.vercel.app'
-  }
-})
-.then(response => {
-  console.log(response.data);
-})
-.catch(error => {
-  console.error('Error:', error);
-});
+// axios.get('https://aqua-track-backend.onrender.com/users', {
+//   withCredentials: true,
+//   headers: {
+//     'Content-Type': 'application/json',
+//     'Origin': 'https://test-aquatrack.vercel.app'
+//   }
+// })
+// .then(response => {
+//   console.log(response.data);
+// })
+// .catch(error => {
+//   console.error('Error:', error);
+// });
 
 fetch('https://aqua-track-backend.onrender.com/users', {
   method: 'GET',
