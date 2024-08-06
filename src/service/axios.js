@@ -22,21 +22,21 @@ import axios from 'axios';
 //   console.error('Error:', error);
 // });
 
-fetch('https://aqua-track-backend.onrender.com/users', {
-  method: 'GET',
-  credentials: 'include', // важливо для відправки кукі
-  headers: {
-    'Content-Type': 'application/json',
-    'Origin': 'https://test-aquatrack.vercel.app'
-  }
-})
-.then(response => response.json())
-.then(data => {
-  console.log(data);
-})
-.catch(error => {
-  console.error('Error:', error);
-});
+// fetch('https://aqua-track-backend.onrender.com/users', {
+//   method: 'GET',
+//   credentials: 'include', // важливо для відправки кукі
+//   headers: {
+//     'Content-Type': 'application/json',
+//     'Origin': 'https://test-aquatrack.vercel.app'
+//   }
+// })
+// .then(response => response.json())
+// .then(data => {
+//   console.log(data);
+// })
+// .catch(error => {
+//   console.error('Error:', error);
+// });
 
 
 const request = async (
