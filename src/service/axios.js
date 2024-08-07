@@ -6,7 +6,7 @@ const apiClient = axios.create({
   withCredentials: true,
 });
 
-axios.post('https://test-aquatrack-backend.onrender.com/auth/login', {
+axios.get('https://test-aquatrack-backend.onrender.com/auth/login', {
   // ваші дані для логіну
 }, {
   withCredentials: true,
