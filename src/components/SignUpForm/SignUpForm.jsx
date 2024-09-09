@@ -142,6 +142,7 @@ const SignUpForm = () => {
           </div>
 
           <input type="submit" className={css.button} value="Sign Up" />
+          <GoogleBtn />
         </form>
         <p className={css.redirect}>
           Already have account?{' '}

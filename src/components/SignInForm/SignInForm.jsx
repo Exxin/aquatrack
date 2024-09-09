@@ -9,6 +9,7 @@ import { login } from '../../redux/auth/operations';
 import { Notify } from 'notiflix/build/notiflix-notify-aio.js';
 import LogoLink from '../LogoLink/LogoLink';
 import Icon from '../Icon/Icon';
+import GoogleBtn from '../GoogleBtn/GoogleBtn';
 
 const emailRegExp = /^[\w.-]+@[a-zA-Z]+\.[a-zA-Z]{2,}$/;
 
@@ -102,6 +103,7 @@ const SignInForm = () => {
             </div>
           </div>
           <input className={style.button} type="submit" value="Sing In" />
+          <GoogleBtn />
         </form>
         <p className={style.redirect}>
           Don’t have an account?{' '}
