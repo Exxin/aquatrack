@@ -1,6 +1,6 @@
 import React from 'react';
 import { FcGoogle } from 'react-icons/fc';
-import { getGoogleOAuthUrl } from '../../services/googleOAuth';
+import { getGoogleOAuthUrl } from '../../service/googleOAuth';
 import css from './GoogleBtn.module.css';
 
 const GoogleBtn = () => {
