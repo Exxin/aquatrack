@@ -5,12 +5,7 @@ import css from './GoogleBtn.module.css';
 
 const GoogleBtn = () => {
   const handleGoogleLogin = async () => {
-    try {
-      const url = await getGoogleOAuthUrl();
-      window.location.href = url;
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    window.location.href = 'http://localhost:5000/auth/google'; // Redirect to backend for Google auth
   };
 
   return (
