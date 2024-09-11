@@ -5,7 +5,7 @@ import css from './GoogleBtn.module.css';
 
 const GoogleBtn = () => {
   const handleGoogleLogin = async () => {
-    window.location.href = 'http://localhost:5000/auth/google'; // Redirect to backend for Google auth
+    window.location.href = 'https://aquatrack-one.vercel.app/auth/google'; // Redirect to backend for Google auth
   };
 
   return (
