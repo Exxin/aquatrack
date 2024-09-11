@@ -1,11 +1,11 @@
 import React from 'react';
 import { FcGoogle } from 'react-icons/fc';
-import { getGoogleOAuthUrl } from '../../service/googleOAuth';
+// import { getGoogleOAuthUrl } from '../../service/googleOAuth';
 import css from './GoogleBtn.module.css';
 
 const GoogleBtn = () => {
   const handleGoogleLogin = async () => {
-    window.location.href = 'https://aquatrack-one.vercel.app/auth/google'; // Redirect to backend for Google auth
+    window.location.href = 'https://test-aquatrack-backend.onrender.com/auth/google'; // Redirect to backend for Google auth
   };
 
   return (
