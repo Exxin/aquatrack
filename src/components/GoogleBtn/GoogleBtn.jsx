@@ -6,7 +6,7 @@ import css from './GoogleBtn.module.css';
 const GoogleBtn = () => {
   const handleGoogleLogin = () => {
     const clientId = '1023602385270-fvjc183aqggcs1q49l8090rtjqg2nvus.apps.googleusercontent.com';
-    const redirectUri = 'https://aquatrack-one.vercel.app/auth/google/callback';
+    const redirectUri = 'https://aquatrack-one.vercel.app/tracker';
     const scope = 'email profile';
     const responseType = 'code';
     const accessType = 'offline';
