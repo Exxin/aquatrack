@@ -6,8 +6,8 @@ import css from './GoogleBtn.module.css';
 const GoogleBtn = () => {
   const handleGoogleLogin = () => {
     window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' +
-      'client_id=YOUR_CLIENT_ID&' +
-      'redirect_uri=https://project-water-bac.onrender.com/auth/google/callback&' +
+      'client_id=1023602385270-fvjc183aqggcs1q49l8090rtjqg2nvus.apps.googleusercontent.com&' +
+      'redirect_uri=https://test-aquatrack-backend.onrender.com/auth/google/callback&' +
       'scope=email profile&' +
       'response_type=code&' +
       'access_type=offline&' +
