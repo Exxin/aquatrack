@@ -3,19 +3,8 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio.js';
 
 const apiClient = axios.create({
   baseURL: 'https://test-aquatrack-backend.onrender.com',
+  // baseURL: 'http://localhost:3000',
   withCredentials: true,
-});
-
-axios.get('https://test-aquatrack-backend.onrender.com', {
-  // ваші дані для логіну
-}, {
-  withCredentials: true,
-})
-.then(response => {
-  console.log(response.data);
-})
-.catch(error => {
-  console.error('Error:', error);
 });
 
 const request = async (
@@ -41,10 +30,9 @@ const request = async (
         Notify.failure('User with this email already exists!');
       } else if (error.request.responseURL.includes("login")) {
         Notify.failure('Wrong login or password!');
+      } else {
+        Notify.failure('Error, try reloading this page');
       }
-      // else {
-      //   Notify.failure('Error, try reloading this page');
-      // }
       throw new Error('Error' + error.message);
       // throw error.response.data;
     } else if (error.request) {
